@@ -62,12 +62,13 @@ public class UserManager {
 	}
 	
 	
-	public static List<String> listUser(){
-		Set<String> userIdSet = userIdUserMap.keySet();
+	public static Map<String,User> listUser(){
+		/*Set<String> userIdSet = userIdUserMap.keySet();
 		List<String> userIdList = new LinkedList<String>();
 		for (String userId : userIdSet) {
 			userIdList.add(userId);
 		}
-		return userIdList;
+		return userIdList;*/
+		return userIdUserMap;
 	}
 }

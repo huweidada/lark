@@ -1,14 +1,14 @@
 package lark.service.message.handler;
 
-import java.util.List;
+import java.util.Map;
 
+import lark.domain.User;
 import lark.domain.message.ListUserMessage;
 import lark.message.inbound.handler.MessageInboundHandler;
 import lark.message.outbound.handler.MessageOutboundHandler;
 import lark.message.outbound.handler.MessageOutboundHandlerManager;
 import lark.service.user.UserManager;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,11 +25,10 @@ public class ListUserMessageHandler implements MessageInboundHandler{
 		ListUserMessage listUserMessage = parse(message);
 		logger.info("userId=[{}]",listUserMessage.getBody().getUserId());
 		
-		List<String> userIdList = UserManager.listUser();
-		String userIds = StringUtils.join(userIdList, ",");
+		Map<String,User> users = UserManager.listUser();
 		
 		MessageOutboundHandler messageOutboundHandler = MessageOutboundHandlerManager.getMessageOutboundHandler("tcp");
-		messageOutboundHandler.write(channelId, userIds);
+		messageOutboundHandler.write(channelId, JSON.toJSONString(users));
 	}
 
 }

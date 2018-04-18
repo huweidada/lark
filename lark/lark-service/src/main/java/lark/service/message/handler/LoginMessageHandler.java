@@ -26,21 +26,25 @@ public class LoginMessageHandler implements MessageInboundHandler {
 	public void handle(String channelId, String message) {
 		LoginMessage loginMessage = parse(message);
 		
-		logger.info("userName=[{}]",loginMessage.getBody().getUserName());
-		logger.info("password=[{}]",loginMessage.getBody().getPassword());
-		
 		Account account = new Account();
-		account.setChannelId(channelId);
 		
+		account.setChannelId(channelId);
 		//备注：userId字段，ticket字段应该是后台实现用户名密码验证过后生成的
 		account.setUserId(loginMessage.getBody().getUserName());
-		account.setTicket(loginMessage.getBody().getPassword());
-		
-		
 		account.setUserName(loginMessage.getBody().getUserName());
 		account.setPassword(loginMessage.getBody().getPassword());
+		account.setTicket(loginMessage.getBody().getPassword());
 		
 		Client client = new Client();
+		client.setVersion(loginMessage.getBody().getClientVersion());
+		client.setPlatform(loginMessage.getBody().getPlatform());
+		client.setNetType(loginMessage.getBody().getNetType());
+		client.setClientLocalIp(loginMessage.getBody().getClientIp());
+		client.setClientLocalPort(loginMessage.getBody().getClientPort());
+		client.setClientIp("139.23.33.3");
+		client.setClientPort("3456");
+		client.setOs(loginMessage.getBody().getOs());
+		client.setDeviceNumber(loginMessage.getBody().getDeviceNumber());
 		account.setClient(client);
 		
 		UserManager.registerAccount(account);
