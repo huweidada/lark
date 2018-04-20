@@ -21,6 +21,9 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
+import lark.message.outbound.ChannelManager;
+import lark.service.user.UserManager;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +46,26 @@ public class WebSocketMessageInboundHandler extends SimpleChannelInboundHandler<
         } else {
             String message = "unsupported frame type: " + frame.getClass().getName();
             throw new UnsupportedOperationException(message);
+        }
+    }
+    
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+    	logger.info("channelActive");
+    }
+    
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+    	logger.info("channelInactive");
+    }
+    
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        logger.error("exceptionCaught",cause);
+        try{
+        	 ctx.close();
+        }catch(Exception e){
+        	logger.error("ctx.close() fail",e);
         }
     }
 }
