@@ -2,7 +2,7 @@ package lark.server;
 
 import java.net.InetSocketAddress;
 
-import lark.server.handler.ChannelInitializerHandler;
+import lark.server.tcp.handler.TcpChannelInitializerHandler;
 import lark.service.message.context.MessageContext;
 import lark.tools.NamedThreadFactory;
 import io.netty.bootstrap.ServerBootstrap;
@@ -34,7 +34,7 @@ public class LarkBootstrap {
 			.option(ChannelOption.SO_BACKLOG, 128)
 			.option(ChannelOption.SO_REUSEADDR, true)
 			.localAddress(new InetSocketAddress(port))
-			.childHandler(new ChannelInitializerHandler())
+			.childHandler(new TcpChannelInitializerHandler())
 			.childOption(ChannelOption.TCP_NODELAY,true)
 			.childOption(ChannelOption.SO_KEEPALIVE,true);
 			

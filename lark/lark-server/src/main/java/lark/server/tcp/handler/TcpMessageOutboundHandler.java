@@ -1,4 +1,4 @@
-package lark.server.handler;
+package lark.server.tcp.handler;
 
 import lark.message.outbound.handler.MessageOutboundHandlerManager;
 import lark.message.outbound.handler.provider.MessageOutboundHandlerProvider;
@@ -14,19 +14,19 @@ import io.netty.channel.ChannelPromise;
 
 
 @Sharable
-public class MessageOutboundHandler extends ChannelOutboundHandlerAdapter{
-	private static final Logger logger = LoggerFactory.getLogger(MessageOutboundHandler.class);
+public class TcpMessageOutboundHandler extends ChannelOutboundHandlerAdapter{
+	private static final Logger logger = LoggerFactory.getLogger(TcpMessageOutboundHandler.class);
 	
-	private static MessageOutboundHandler instance;
+	private static TcpMessageOutboundHandler instance;
 	//private MessageHandlerDispatcher dispatcher; 
 
-	public static MessageOutboundHandler getInstance(){
+	public static TcpMessageOutboundHandler getInstance(){
 		if(instance == null){
-			instance = new MessageOutboundHandler();
+			instance = new TcpMessageOutboundHandler();
 		}
 		return instance;
 	}
-	private MessageOutboundHandler() {
+	private TcpMessageOutboundHandler() {
 		MessageOutboundHandlerProvider tcpMessageHandlerProvider = new TcpMessageOutboundHandlerProvider();
 		MessageOutboundHandlerManager.registerProvider(tcpMessageHandlerProvider.getName(), tcpMessageHandlerProvider);
 		logger.info("MessageOutboundHandler created");

@@ -1,4 +1,4 @@
-package lark.server.handler;
+package lark.server.tcp.handler;
 
 import java.util.UUID;
 
@@ -24,19 +24,19 @@ import io.netty.handler.timeout.IdleStateEvent;
 
 
 @Sharable
-public class MessageInboundHandler extends ChannelInboundHandlerAdapter{
-	private static final Logger logger = LoggerFactory.getLogger(MessageInboundHandler.class);
+public class TcpMessageInboundHandler extends ChannelInboundHandlerAdapter{
+	private static final Logger logger = LoggerFactory.getLogger(TcpMessageInboundHandler.class);
 	
-	private static MessageInboundHandler instance;
+	private static TcpMessageInboundHandler instance;
 	private MessageHandlerDispatcher dispatcher; 
 
-	public static MessageInboundHandler getInstance(){
+	public static TcpMessageInboundHandler getInstance(){
 		if(instance == null){
-			instance = new MessageInboundHandler();
+			instance = new TcpMessageInboundHandler();
 		}
 		return instance;
 	}
-	private MessageInboundHandler() {
+	private TcpMessageInboundHandler() {
 		super();
 		dispatcher = new LocalMessageHandlerDispatcher();
 		logger.info("MessageRouteHandler created");		
