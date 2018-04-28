@@ -31,7 +31,6 @@ import org.slf4j.LoggerFactory;
  * Echoes uppercase content of text frames.
  */
 public class WebSocketMessageOutboundHandler extends ChannelOutboundHandlerAdapter {
-
     private static final Logger logger = LoggerFactory.getLogger(WebSocketMessageOutboundHandler.class);
 
     @Override
