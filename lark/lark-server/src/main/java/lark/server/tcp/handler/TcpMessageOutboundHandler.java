@@ -43,4 +43,10 @@ public class TcpMessageOutboundHandler extends ChannelOutboundHandlerAdapter{
 		logger.info("MessageOutboundHandler flush begin");
         ctx.flush();
     }
+	
+	@Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        logger.info("TcpMessageOutboundHandler exceptionCaught");
+		ctx.fireExceptionCaught(cause);
+    }
 }

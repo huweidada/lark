@@ -38,9 +38,11 @@ public class WebSocketMessageOutboundHandler extends ChannelOutboundHandlerAdapt
 		
 		if(msg instanceof String){
 			logger.info("MessageOutboundHandler write begin,msg instanceof String");
-			ctx.channel().writeAndFlush(new TextWebSocketFrame((String) msg));
+			TextWebSocketFrame frame = new TextWebSocketFrame((String) msg);
+			logger.info("frame=[{}]",frame);
+			ctx.channel().writeAndFlush(frame);
 		}else{
-			logger.info("MessageOutboundHandler write begin");
+			logger.info("MessageOutboundHandler write begin,msg.type=[{}],msg=[{}]",msg.getClass().getName(),msg);
 			ctx.write(msg, promise);
 		}
     }
