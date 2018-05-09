@@ -24,6 +24,8 @@ public class LoginMessageHandler implements MessageInboundHandler {
 	}
 
 	public void handle(String channelId, String message) {
+		logger.info("channelId=[{}],message=[{}]",channelId,message);
+		
 		LoginMessage loginMessage = parse(message);
 		
 		Account account = new Account();
