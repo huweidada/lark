@@ -1,9 +1,10 @@
-package lark.domain.message;
+package lark.domain.message.login;
 
 import java.util.UUID;
 
 import com.alibaba.fastjson.JSON;
 
+import lark.domain.message.MessageHeader;
 import lombok.ToString;
 
 @ToString

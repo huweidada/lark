@@ -3,7 +3,7 @@ package lark.service.message.handler;
 import java.util.Map;
 
 import lark.domain.User;
-import lark.domain.message.ListUserMessage;
+import lark.domain.message.user.ListUserMessage;
 import lark.message.inbound.handler.MessageInboundHandler;
 import lark.message.outbound.handler.MessageOutboundHandler;
 import lark.message.outbound.handler.MessageOutboundHandlerManager;

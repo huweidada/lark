@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
 
-import lark.domain.message.SingleChatMessage;
+import lark.domain.message.chat.SingleChatMessage;
 import lark.message.inbound.handler.MessageInboundHandler;
 
 public class SingleChatMessageHandler implements MessageInboundHandler{

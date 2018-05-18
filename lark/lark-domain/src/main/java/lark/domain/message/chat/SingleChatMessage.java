@@ -1,5 +1,6 @@
-package lark.domain.message;
+package lark.domain.message.chat;
 
+import lark.domain.message.MessageHeader;
 import lombok.ToString;
 
 @ToString

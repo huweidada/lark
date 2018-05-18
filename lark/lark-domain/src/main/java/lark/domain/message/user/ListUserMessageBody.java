@@ -1,4 +1,4 @@
-package lark.domain.message;
+package lark.domain.message.user;
 
 import java.io.Serializable;
 

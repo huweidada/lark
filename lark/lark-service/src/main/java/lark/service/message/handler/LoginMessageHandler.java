@@ -3,7 +3,7 @@ package lark.service.message.handler;
 
 import lark.domain.Account;
 import lark.domain.Client;
-import lark.domain.message.LoginMessage;
+import lark.domain.message.login.LoginMessage;
 import lark.message.inbound.handler.MessageInboundHandler;
 import lark.message.outbound.handler.MessageOutboundHandler;
 import lark.message.outbound.handler.MessageOutboundHandlerManager;

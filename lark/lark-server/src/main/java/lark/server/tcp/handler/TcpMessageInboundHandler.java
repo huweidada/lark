@@ -48,6 +48,8 @@ public class TcpMessageInboundHandler extends ChannelInboundHandlerAdapter{
 		setChannelId(ctx.channel(),channelId);
 		ChannelManager.registerChannel(channelId,ctx.channel());
 		
+		//ctx.channel().closeFuture().addListener();
+		
 		logger.info("channelActive,channelId=[{}]",channelId);
     }
 	
