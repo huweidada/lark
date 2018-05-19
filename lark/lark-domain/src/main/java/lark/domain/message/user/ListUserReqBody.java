@@ -7,9 +7,9 @@ import lombok.Setter;
 import lombok.ToString;
 
 @ToString
-public class ListUserMessageBody implements Serializable{
+public class ListUserReqBody implements Serializable{
 	private static final long serialVersionUID = 1L;
 
 	@Getter @Setter private int maxNumber;
-	@Getter @Setter private String userId;
+	@Getter @Setter private String ticket;
 }

@@ -4,7 +4,7 @@ import lark.domain.message.MessageReqHeader;
 import lombok.ToString;
 
 @ToString
-public class ListUserMessage extends MessageReqHeader<ListUserMessageBody>{
+public class ListUserReq extends MessageReqHeader<ListUserReqBody>{
 	private static final long serialVersionUID = 1L;
 
 }

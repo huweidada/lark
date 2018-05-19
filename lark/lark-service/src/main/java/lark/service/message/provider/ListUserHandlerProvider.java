@@ -2,11 +2,11 @@ package lark.service.message.provider;
 
 import lark.message.inbound.handler.MessageInboundHandler;
 import lark.message.inbound.handler.provider.MessageInboundHandlerProvider;
-import lark.service.message.handler.ListUserMessageHandler;
+import lark.service.message.handler.ListUserHandler;
 
-public class ListUserMessageHandlerProvider implements MessageInboundHandlerProvider {
-	public ListUserMessageHandlerProvider() {
-		this.handler = new ListUserMessageHandler();
+public class ListUserHandlerProvider implements MessageInboundHandlerProvider {
+	public ListUserHandlerProvider() {
+		this.handler = new ListUserHandler();
 	}
 
 	private MessageInboundHandler handler;
