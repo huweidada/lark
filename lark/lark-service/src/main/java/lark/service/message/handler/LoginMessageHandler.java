@@ -3,7 +3,7 @@ package lark.service.message.handler;
 
 import lark.domain.Account;
 import lark.domain.Client;
-import lark.domain.message.login.LoginMessage;
+import lark.domain.message.login.LoginReq;
 import lark.message.inbound.handler.MessageInboundHandler;
 import lark.message.outbound.handler.MessageOutboundHandler;
 import lark.message.outbound.handler.MessageOutboundHandlerManager;
@@ -19,14 +19,14 @@ import com.alibaba.fastjson.JSON;
 public class LoginMessageHandler implements MessageInboundHandler {
 	private static final Logger logger = LoggerFactory.getLogger(LoginMessageHandler.class);
 	
-	private LoginMessage parse(String message) {
-		return JSON.parseObject(message,LoginMessage.class);
+	private LoginReq parse(String message) {
+		return JSON.parseObject(message,LoginReq.class);
 	}
 
 	public void handle(String channelId, String message) {
 		logger.info("channelId=[{}],message=[{}]",channelId,message);
 		
-		LoginMessage loginMessage = parse(message);
+		LoginReq loginMessage = parse(message);
 		
 		Account account = new Account();
 		

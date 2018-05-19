@@ -6,7 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 @ToString
-public class MessageHeader<T extends Serializable> implements Serializable{
+public class MessageReqHeader<T extends Serializable> implements Serializable{
 	private static final long serialVersionUID = 1L;
 	@Getter @Setter private String transactionId;
 	@Getter @Setter private String type;

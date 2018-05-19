@@ -4,25 +4,25 @@ import java.util.UUID;
 
 import com.alibaba.fastjson.JSON;
 
-import lark.domain.message.MessageHeader;
+import lark.domain.message.MessageReqHeader;
 import lombok.ToString;
 
 @ToString
-public class LoginMessage extends MessageHeader<LoginMessageBody>{
+public class LoginReq extends MessageReqHeader<LoginReqBody>{
 	private static final long serialVersionUID = 1L;
 	
 	public static void main(String[] args) {
 		System.out.println("xxxxxx");
 		
 		
-		LoginMessage message = new LoginMessage();
+		LoginReq message = new LoginReq();
 		
 		message.setTransactionId(UUID.randomUUID().toString());
 		message.setType("login");
 		message.setVersion(1);
 		message.setTime(System.currentTimeMillis());
 		
-		LoginMessageBody body = new LoginMessageBody();
+		LoginReqBody body = new LoginReqBody();
 		body.setAuthType(1);
 		body.setUserName("huwei");
 		body.setPassword("huwei");
