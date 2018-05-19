@@ -112,8 +112,6 @@ public class LoginHandler implements MessageInboundHandler {
 		
 		UserManager.registerAccount(account);
 		
-		
-		
 		LoginRespBody loginRespBody = new LoginRespBody();
 		loginRespBody.setTicket(ticket);
 		loginResp.setBody(loginRespBody);

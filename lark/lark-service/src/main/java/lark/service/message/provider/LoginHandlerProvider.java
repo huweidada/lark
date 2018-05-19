@@ -4,8 +4,8 @@ import lark.message.inbound.handler.MessageInboundHandler;
 import lark.message.inbound.handler.provider.MessageInboundHandlerProvider;
 import lark.service.message.handler.LoginHandler;
 
-public class LoginMessageHandlerProvider implements MessageInboundHandlerProvider {
-	public LoginMessageHandlerProvider() {
+public class LoginHandlerProvider implements MessageInboundHandlerProvider {
+	public LoginHandlerProvider() {
 		this.handler = new LoginHandler();
 	}
 

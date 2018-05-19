@@ -15,10 +15,12 @@ import org.apache.commons.lang3.StringUtils;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.AttributeKey;
 import io.netty.util.CharsetUtil;
+import io.netty.util.concurrent.GenericFutureListener;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.handler.timeout.IdleStateEvent;
 
@@ -48,10 +50,25 @@ public class TcpMessageInboundHandler extends ChannelInboundHandlerAdapter{
 		setChannelId(ctx.channel(),channelId);
 		ChannelManager.registerChannel(channelId,ctx.channel());
 		
-		//ctx.channel().closeFuture().addListener();
-		
+		ctx.channel().closeFuture().addListener(new GenericFutureListener<ChannelFuture>() {
+			@Override
+			public void operationComplete(ChannelFuture future)
+					throws Exception {
+				logger.info("closeFuture operationComplete");
+				//future.channel().close();
+			}
+		});
 		logger.info("channelActive,channelId=[{}]",channelId);
     }
+	@Override
+	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+		String channelId = getChannelId(ctx.channel());
+		logger.info("channelInactive channelId=[{}]",channelId);
+		
+		ChannelManager.unregisterChannel(channelId);
+        
+	    UserManager.unregisterAccountByChannelId(channelId);
+	}
 	
 	@Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -94,6 +111,8 @@ public class TcpMessageInboundHandler extends ChannelInboundHandlerAdapter{
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         logger.error("exceptionCaught",cause);
         String channelId = getChannelId(ctx.channel());
+        
+        logger.info("channelId=[{}]",channelId);
         ChannelManager.unregisterChannel(channelId);
         
         UserManager.unregisterAccountByChannelId(channelId);
