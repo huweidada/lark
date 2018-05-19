@@ -65,9 +65,19 @@ public class UserManager {
 	}
 	
 	
-	public static User getUser(String userId){
+	public static User getUserByUserId(String userId){
 		return userIdUserMap.get(userId);
 	}
+	
+	public static Account getAccountByChannelId(String channelId){
+		return channelIdAccountMap.get(channelId);
+	}
+	
+	/*public static User getUserByChannelId(String channelId){
+		Account account = channelIdAccountMap.get(channelId);
+		if(account == null) return null;
+		return getUserByUserId(account.getUserId());
+	}*/
 	
 	
 	public static Map<String,User> listUser(){

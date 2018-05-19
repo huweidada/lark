@@ -6,7 +6,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
+
+@ToString
 public class User implements Serializable{
 	public User(Account account) {
 		if(account == null) throw new RuntimeException("account == null");
