@@ -5,7 +5,7 @@ import lark.message.inbound.handler.provider.MessageInboundHandlerProvider;
 import lark.service.message.provider.HeartbeatHandlerProvider;
 import lark.service.message.provider.ListUserHandlerProvider;
 import lark.service.message.provider.LoginHandlerProvider;
-import lark.service.message.provider.SingleChatMessageHandlerProvider;
+import lark.service.message.provider.SingleChatHandlerProvider;
 
 public class MessageContext {
 	public static void registerMessageHandlerProvider(){
@@ -18,7 +18,7 @@ public class MessageContext {
 		MessageInboundHandlerProvider listUserHandlerProvider = new ListUserHandlerProvider();
 		MessageInboundHandlerManager.registerProvider(listUserHandlerProvider.getName(), listUserHandlerProvider);
 		
-		MessageInboundHandlerProvider singleChatMessageHandlerProvider = new SingleChatMessageHandlerProvider();
-		MessageInboundHandlerManager.registerProvider(singleChatMessageHandlerProvider.getName(), singleChatMessageHandlerProvider);
+		MessageInboundHandlerProvider singleChatHandlerProvider = new SingleChatHandlerProvider();
+		MessageInboundHandlerManager.registerProvider(singleChatHandlerProvider.getName(), singleChatHandlerProvider);
 	}
 }

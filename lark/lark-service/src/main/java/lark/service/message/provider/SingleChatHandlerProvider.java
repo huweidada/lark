@@ -2,12 +2,12 @@ package lark.service.message.provider;
 
 import lark.message.inbound.handler.MessageInboundHandler;
 import lark.message.inbound.handler.provider.MessageInboundHandlerProvider;
-import lark.service.message.handler.SingleChatMessageHandler;
+import lark.service.message.handler.SingleChatHandler;
 
 
-public class SingleChatMessageHandlerProvider implements MessageInboundHandlerProvider {
-	public SingleChatMessageHandlerProvider() {
-		this.handler = new SingleChatMessageHandler();
+public class SingleChatHandlerProvider implements MessageInboundHandlerProvider {
+	public SingleChatHandlerProvider() {
+		this.handler = new SingleChatHandler();
 	}
 	private MessageInboundHandler handler;
 	
