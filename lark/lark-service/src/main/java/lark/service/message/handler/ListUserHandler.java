@@ -62,11 +62,16 @@ public class ListUserHandler implements MessageInboundHandler{
 		}
 		
 		
-		ListUserRespBody listUserRespBody = new ListUserRespBody();
-		Map<String,User> userMap = UserManager.listUser();
+		
+		
 		List<User> userList = new LinkedList<User>();
+		Map<String,User> userMap = UserManager.listUser();
 		userList.addAll(userMap.values());
+		
+		ListUserRespBody listUserRespBody = new ListUserRespBody();
 		listUserRespBody.setUserList(userList);
+		
+		listUserResp.setBody(listUserRespBody);
 		listUserResp.setStatusCode(ServerStatusCode.success);
 		messageOutboundHandler.write(channelId, JSON.toJSONString(listUserResp));
 		return;
