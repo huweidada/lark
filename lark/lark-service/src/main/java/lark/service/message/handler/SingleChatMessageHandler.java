@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
 
-import lark.domain.message.chat.SingleChatMessage;
+import lark.domain.message.chat.SingleChatReq;
 import lark.message.inbound.handler.MessageInboundHandler;
 
 public class SingleChatMessageHandler implements MessageInboundHandler{
@@ -23,12 +23,12 @@ public class SingleChatMessageHandler implements MessageInboundHandler{
 		toChannel.writeAndFlush(Unpooled.copiedBuffer(message.getBody().getContent(),CharsetUtil.UTF_8));
 	}*/
 
-	public SingleChatMessage parse(String message) {
-		return JSON.parseObject(message,SingleChatMessage.class);
+	public SingleChatReq parse(String message) {
+		return JSON.parseObject(message,SingleChatReq.class);
 	}
 
 	public void handle(String channelId, String message) {
-		SingleChatMessage singleChatMessage = parse(message);
+		SingleChatReq singleChatMessage = parse(message);
 		/*logger.info("message.getBody().getFromPin()=[{}]",singleChatMessage.getBody().getFromPin());
 		logger.info("message.getBody().getToPin()=[{}]",singleChatMessage.getBody().getToPin());*/
 		

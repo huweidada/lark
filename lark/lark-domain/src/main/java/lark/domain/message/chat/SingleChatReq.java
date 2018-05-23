@@ -4,7 +4,7 @@ import lark.domain.message.MessageReqHeader;
 import lombok.ToString;
 
 @ToString
-public class SingleChatMessage extends MessageReqHeader<SingleChatMessageBody>{
+public class SingleChatReq extends MessageReqHeader<SingleChatReqBody>{
 	private static final long serialVersionUID = 1L;
 
 }
