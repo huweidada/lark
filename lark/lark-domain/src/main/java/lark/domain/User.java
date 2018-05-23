@@ -52,12 +52,14 @@ public class User implements Serializable{
 		}
 	}
 	
-	public void updateActiveChannelId(String channelId){
-		if(channelIdAccountMap.containsKey(activeChannelId)){
-			activeChannelId = channelId;
-		}else{
-			throw new RuntimeException("channelIdAccountMap.containsKey(activeChannelId) == false");
-		}
+	public int updateActiveChannelId(String channelId){
+		if(!channelIdAccountMap.containsKey(activeChannelId)) return -1;
+		activeChannelId = channelId;
+		return 0;
+	}
+	
+	public Account getAccount(String channelId){
+		return channelIdAccountMap.get(channelId);
 	}
 		
 
