@@ -22,7 +22,7 @@ public class SingleChatReq extends MessageReqHeader<SingleChatReqBody>{
 		body.setTicket("xxxx");
 		body.setContentType(100);
 		body.setContent("第一条消息");
-		
+		req.setBody(body);
 		
 		System.out.println(JSON.toJSONString(req));
 	}
