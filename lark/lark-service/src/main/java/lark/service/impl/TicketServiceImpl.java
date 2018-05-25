@@ -24,7 +24,7 @@ import lark.service.TicketService;
 public class TicketServiceImpl implements TicketService {
 	private static final Logger logger = LoggerFactory.getLogger(TicketServiceImpl.class);
 	
-	private String privateKey = "0e4fdcff337d4fe895dd6e74aa327a4e";
+	private String privateKey = "5dd6e74aa327a4er";
 	private SecretKeySpec secretKeySpec = new SecretKeySpec(privateKey.getBytes(), "AES");
 	
 	private String initVectorKey = "0102030405060708";
@@ -125,4 +125,26 @@ public class TicketServiceImpl implements TicketService {
         
 	}
 
+	
+	public static void main(String[] args) {
+		TicketServiceImpl impl = new TicketServiceImpl();
+		
+		String src = "huwei33";
+		
+		String e = impl.generateTicket(1, src, 100);
+		
+		String d = impl.checkTicket(e);
+		
+		System.out.println(e);
+		System.out.println(d);
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 }
