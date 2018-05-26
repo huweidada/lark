@@ -29,7 +29,7 @@ public class LoginHandler implements MessageInboundHandler {
 	
 	public LoginHandler() {
 		super();
-		ticketService = new TicketServiceImpl();
+		ticketService = TicketServiceImpl.getInstance();
 	}
 	
 	private LoginReq parse(String message) {

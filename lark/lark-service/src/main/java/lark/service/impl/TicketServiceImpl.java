@@ -41,7 +41,18 @@ public class TicketServiceImpl implements TicketService {
 	private Map<String,Long> ticketMap;
 	private Thread expiredTicketCleanThread;
 	
-	public TicketServiceImpl() {
+	
+	private static TicketService instance;
+	
+	public static TicketService getInstance(){
+		if(instance != null) return instance;
+		
+		instance = new TicketServiceImpl();
+		return instance;
+	}
+	
+	
+	private TicketServiceImpl() {
 		ticketMap = new ConcurrentHashMap<String, Long>();	
 		
 		expiredTicketCleanThread = new ExpiredTicketCleanThread();

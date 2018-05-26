@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSON;
 
 import lark.domain.AccessPoint;
-import lark.domain.Account;
 import lark.domain.Server;
 import lark.domain.ServerStatusCode;
 import lark.domain.User;
@@ -19,12 +18,19 @@ import lark.domain.message.chat.SingleChatRespBody;
 import lark.message.inbound.handler.MessageInboundHandler;
 import lark.message.outbound.handler.MessageOutboundHandler;
 import lark.message.outbound.handler.MessageOutboundHandlerManager;
+import lark.service.TicketService;
+import lark.service.impl.TicketServiceImpl;
 import lark.service.user.UserManager;
 
 public class SingleChatHandler implements MessageInboundHandler{
 	private static final Logger logger = LoggerFactory.getLogger(SingleChatHandler.class);
 	private static final String type = "singleChat";
+	private TicketService ticketService;
 	
+	public SingleChatHandler() {
+		super();
+		ticketService = TicketServiceImpl.getInstance();
+	}
 	
 	public SingleChatReq parse(String message) {
 		return JSON.parseObject(message,SingleChatReq.class);
@@ -63,17 +69,38 @@ public class SingleChatHandler implements MessageInboundHandler{
 			return;
 		}
 		
-		Account account = UserManager.getAccountByChannelId(channelId);
+		String userId = null;
+		try{
+			userId = ticketService.checkTicketAndResetTll(singleChatReq.getBody().getTicket());
+		}catch(Exception e){
+			logger.error("ticketService.checkTicketAndResetTll(ticket[{}]) fail",singleChatReq.getBody().getTicket(),e);
+			singleChatResp.setStatusCode(ServerStatusCode.ticketError);
+			singleChatResp.setStatusDescription("ticketError");
+			messageOutboundHandler.write(channelId, JSON.toJSONString(singleChatResp));
+			return;
+		}
+		if(StringUtils.isBlank(userId)){
+			logger.error("StringUtils.isBlank(userId) == true");
+			singleChatResp.setStatusCode(ServerStatusCode.ticketError);
+			singleChatResp.setStatusDescription("ticketError");
+			messageOutboundHandler.write(channelId, JSON.toJSONString(singleChatResp));
+			return;
+		}
+		
+		
+		
 		//这个一般是遭受到攻击或者客户端有bug的情况，不然应该不会出现这种情况，返回系统错误
-		if(account == null){
+		/*
+		 Account account = UserManager.getAccountByChannelId(channelId);
+		 if(account == null){
 			logger.error("account == null,channelId=[{}]]",channelId);
 			singleChatResp.setStatusCode(ServerStatusCode.systemError);
 			singleChatResp.setStatusDescription("systemError");
 			messageOutboundHandler.write(channelId, JSON.toJSONString(singleChatResp));
 			return;
-		}
+		}*/
 		
-		if(!account.getTicket().equals(singleChatReq.getBody().getTicket())){
+		/*if(!account.getTicket().equals(singleChatReq.getBody().getTicket())){
 			logger.error("!account.getTicket().equals(ticket) == true");
 			logger.error("channelId=[{}],ticket=[{}],account=[{}]",channelId,singleChatReq.getBody().getTicket(),account.toString());
 			
@@ -81,12 +108,11 @@ public class SingleChatHandler implements MessageInboundHandler{
 			singleChatResp.setStatusDescription("ticketError");
 			messageOutboundHandler.write(channelId, JSON.toJSONString(singleChatResp));
 			return;
+		}*/
 		
-		}
-		
-		User senderUser = UserManager.getUserByUserId(account.getUserId());
+		User senderUser = UserManager.getUserByUserId(userId);
 		if(senderUser == null){
-			logger.error("senderUser == null,userId=[{}]",account.getUserId());
+			logger.error("senderUser == null,userId=[{}]",userId);
 			//这里返回ticketError的原因是因为senderUser其实是根据ticket查出来的
 			singleChatResp.setStatusCode(ServerStatusCode.ticketError);
 			singleChatResp.setStatusDescription("ticketError");
@@ -94,7 +120,7 @@ public class SingleChatHandler implements MessageInboundHandler{
 			return;
 		}
 		
-		//我们这里第一步先根据activeChannelId
+		//我们这里第一步先更新activeChannelId
 		senderUser.updateActiveChannelId(channelId);
 		
 		
@@ -169,7 +195,7 @@ public class SingleChatHandler implements MessageInboundHandler{
 		
 		return 0;
 	}
-	
+		
 	public static enum StatusCode{
 		receiverOffline(200100,"消息接收者离线");
 		
