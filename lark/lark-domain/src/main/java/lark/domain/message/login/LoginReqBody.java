@@ -24,7 +24,7 @@ public class LoginReqBody implements Serializable{
 	
 	@Getter @Setter private String netType;
 	@Getter @Setter private String clientIp;
-	@Getter @Setter private String clientPort;
+	@Getter @Setter private int clientPort;
 	
 	@Getter @Setter private String deviceNumber;
 }

@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import lark.domain.AccessPoint;
 import lark.domain.Server;
 import lark.domain.ServerStatusCode;
 import lark.domain.User;
@@ -29,8 +30,9 @@ public class ListUserHandler implements MessageInboundHandler{
 		return JSON.parseObject(message,ListUserReq.class);
 	}
 
-	public void handle(String channelId, String message) {
-		logger.info("channelId=[{}],message=[{}]",channelId,message);
+	public void handle(AccessPoint accessPoint, String message) {
+		logger.info("accessPoint=[{}],message=[{}]",JSON.toJSONString(accessPoint),message);
+		String channelId = accessPoint.getChannelId();
 		
 		MessageOutboundHandler messageOutboundHandler = MessageOutboundHandlerManager.getMessageOutboundHandler("tcp");
 		

@@ -1,5 +1,6 @@
 package lark.message.inbound.handler.dispatcher;
 
+import lark.domain.AccessPoint;
 import lark.message.inbound.handler.MessageInboundHandler;
 import lark.message.inbound.handler.MessageInboundHandlerManager;
 
@@ -15,17 +16,9 @@ public class LocalMessageHandlerDispatcher implements MessageHandlerDispatcher {
 	private static final Logger logger = LoggerFactory.getLogger(LocalMessageHandlerDispatcher.class);
 	
 	public LocalMessageHandlerDispatcher() {
-		/*MessageInboundHandlerProvider loginMessageHandlerProvider = new LoginMessageHandlerProvider();
-		MessageInboundHandlerManager.registerProvider(loginMessageHandlerProvider.getName(), loginMessageHandlerProvider);
-		
-		MessageInboundHandlerProvider listUserMessageHandlerProvider = new ListUserMessageHandlerProvider();
-		MessageInboundHandlerManager.registerProvider(listUserMessageHandlerProvider.getName(), listUserMessageHandlerProvider);
-		
-		MessageInboundHandlerProvider singleChatMessageHandlerProvider = new SingleChatMessageHandlerProvider();
-		MessageInboundHandlerManager.registerProvider(singleChatMessageHandlerProvider.getName(), singleChatMessageHandlerProvider);*/
 	}
 	
-	public void dispatch(String channelId, String message) {
+	public void dispatch(AccessPoint accessPoint, String message) {
 		JSONObject jsonMessage = null;
         try{
         	jsonMessage = JSON.parseObject(message);
@@ -47,7 +40,7 @@ public class LocalMessageHandlerDispatcher implements MessageHandlerDispatcher {
         	return;
         }
         try{
-        	messageInboundHandler.handle(channelId,message);
+        	messageInboundHandler.handle(accessPoint,message);
         }catch(Exception e){
         	logger.error("messageHandler.handle fail,message=[{}]",message,e);
         }

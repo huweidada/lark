@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
 
+import lark.domain.AccessPoint;
 import lark.domain.Account;
 import lark.domain.Server;
 import lark.domain.ServerStatusCode;
@@ -29,8 +30,9 @@ public class SingleChatHandler implements MessageInboundHandler{
 		return JSON.parseObject(message,SingleChatReq.class);
 	}
 
-	public void handle(String channelId, String message) {
-		logger.info("channelId=[{}],message=[{}]",channelId,message);
+	public void handle(AccessPoint accessPoint, String message) {
+		logger.info("accessPoint=[{}],message=[{}]",JSON.toJSONString(accessPoint),message);
+		String channelId = accessPoint.getChannelId();
 		
 		MessageOutboundHandler messageOutboundHandler = MessageOutboundHandlerManager.getMessageOutboundHandler("tcp");
 		

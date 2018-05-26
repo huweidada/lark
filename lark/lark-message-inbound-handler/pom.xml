@@ -7,13 +7,13 @@
   </parent>
   <artifactId>lark-message-inbound-handler</artifactId>
   
-  <!-- <dependencies>
+  <dependencies>
   	<dependency>
   		<groupId>com.cloud.im</groupId>
-	    <artifactId>lark-service</artifactId>
+	    <artifactId>lark-domain</artifactId>
 	    <version>1.0.0-SNAPSHOT</version>
   	</dependency>
   
-  </dependencies> -->
+  </dependencies>
   
 </project>

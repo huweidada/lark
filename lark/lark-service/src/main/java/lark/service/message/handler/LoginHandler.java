@@ -1,12 +1,6 @@
 package lark.service.message.handler;
 
-
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
-import java.util.Base64.Encoder;
-
+import lark.domain.AccessPoint;
 import lark.domain.Account;
 import lark.domain.Client;
 import lark.domain.Server;
@@ -17,6 +11,8 @@ import lark.domain.message.login.LoginRespBody;
 import lark.message.inbound.handler.MessageInboundHandler;
 import lark.message.outbound.handler.MessageOutboundHandler;
 import lark.message.outbound.handler.MessageOutboundHandlerManager;
+import lark.service.TicketService;
+import lark.service.impl.TicketServiceImpl;
 import lark.service.user.UserManager;
 
 import org.apache.commons.lang3.StringUtils;
@@ -25,18 +21,24 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
 
-
-
 public class LoginHandler implements MessageInboundHandler {
 	private static final Logger logger = LoggerFactory.getLogger(LoginHandler.class);
 	private static final String type = "login";
+	
+	private TicketService ticketService;
+	
+	public LoginHandler() {
+		super();
+		ticketService = new TicketServiceImpl();
+	}
 	
 	private LoginReq parse(String message) {
 		return JSON.parseObject(message,LoginReq.class);
 	}
 
-	public void handle(String channelId, String message) {
-		logger.info("channelId=[{}],message=[{}]",channelId,message);
+	public void handle(AccessPoint accessPoint, String message) {
+		logger.info("accessPoint=[{}],message=[{}]",JSON.toJSONString(accessPoint),message);
+		String channelId = accessPoint.getChannelId();
 		
 		MessageOutboundHandler messageOutboundHandler = MessageOutboundHandlerManager.getMessageOutboundHandler("tcp");
 		
@@ -87,7 +89,7 @@ public class LoginHandler implements MessageInboundHandler {
 		
 		
 		String userId = getUserId(loginReq.getBody().getAuthType(),loginReq.getBody().getUserName(),loginReq.getBody().getPassword());
-		String ticket = generateTicket(loginReq.getBody().getAuthType(),loginReq.getBody().getUserName(),loginReq.getBody().getPassword());
+		String ticket = ticketService.generateTicket(loginReq.getBody().getAuthType(),userId);
 		
 		Account account = new Account();
 		
@@ -104,8 +106,8 @@ public class LoginHandler implements MessageInboundHandler {
 		client.setNetType(loginReq.getBody().getNetType());
 		client.setClientLocalIp(loginReq.getBody().getClientIp());
 		client.setClientLocalPort(loginReq.getBody().getClientPort());
-		client.setClientIp("139.23.33.3");
-		client.setClientPort("3456");
+		client.setClientIp(accessPoint.getClientIp());
+		client.setClientPort(accessPoint.getClientPort());
 		client.setOs(loginReq.getBody().getOs());
 		client.setDeviceNumber(loginReq.getBody().getDeviceNumber());
 		account.setClient(client);
@@ -131,29 +133,6 @@ public class LoginHandler implements MessageInboundHandler {
 	
 	private String getUserId(int authType,String userName,String password){
 		return userName;
-	}
-	
-	private String generateTicket(int authType,String userName,String password){
-		MessageDigest md5 = null;
-		try {
-			md5 = MessageDigest.getInstance("MD5");
-		} catch (NoSuchAlgorithmException e) {
-			logger.error("MessageDigest.getInstance(\"MD5\") fail",e);
-			throw new RuntimeException("MessageDigest.getInstance(\"MD5\" fail");
-		}
-		
-		byte[] input;
-		try {
-			input = (userName + password).getBytes("UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			logger.error("userName=[{}],password=[{}]", userName, password);
-			logger.error("getBytes(\"UTF-8\") fail",e);
-			throw new RuntimeException("getBytes(\"UTF-8\") fail");
-		}
-		byte[] output = md5.digest(input);
-		Encoder encoder = Base64.getEncoder();
-		
-		return encoder.encodeToString(output);
 	}
 	
 	//注意100一下为公共的返回码定义，100以上的才是业务产生的编码

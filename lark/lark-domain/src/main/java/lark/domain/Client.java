@@ -13,9 +13,9 @@ public class Client implements Serializable{
 	@Getter @Setter private String platform;
 	@Getter @Setter private String netType;
 	@Getter @Setter private String clientIp;
-	@Getter @Setter private String clientPort;
+	@Getter @Setter private int clientPort;
 	@Getter @Setter private String clientLocalIp;
-	@Getter @Setter private String clientLocalPort;
+	@Getter @Setter private int clientLocalPort;
 	@Getter @Setter private String os;
 	@Getter @Setter private String deviceNumber;
 }

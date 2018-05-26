@@ -30,7 +30,7 @@ public class LoginReq extends MessageReqHeader<LoginReqBody>{
 		body.setPlatform("web");
 		body.setNetType("wifi");
 		body.setClientIp("192.168.1.2");
-		body.setClientPort("6023");
+		body.setClientPort(6023);
 		body.setDeviceNumber("123456789");
 		
 		message.setBody(body);

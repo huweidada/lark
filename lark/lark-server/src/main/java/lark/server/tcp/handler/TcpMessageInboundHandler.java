@@ -1,7 +1,9 @@
 package lark.server.tcp.handler;
 
+import java.net.InetSocketAddress;
 import java.util.UUID;
 
+import lark.domain.AccessPoint;
 import lark.message.inbound.handler.dispatcher.LocalMessageHandlerDispatcher;
 import lark.message.inbound.handler.dispatcher.MessageHandlerDispatcher;
 import lark.message.outbound.ChannelManager;
@@ -12,6 +14,8 @@ import lark.service.user.UserManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.commons.lang3.StringUtils;
+
+import com.alibaba.fastjson.JSON;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
@@ -47,7 +51,16 @@ public class TcpMessageInboundHandler extends ChannelInboundHandlerAdapter{
 	@Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
 		String channelId = UUID.randomUUID().toString();
-		setChannelId(ctx.channel(),channelId);
+		Channel channel = ctx.channel();
+
+		AccessPoint accessPoint = new AccessPoint();
+		accessPoint.setChannelId(channelId);
+		accessPoint.setClientIp(((InetSocketAddress)channel.remoteAddress()).getAddress().getHostAddress());
+		accessPoint.setClientPort(((InetSocketAddress)channel.remoteAddress()).getPort());
+		accessPoint.setServerIp(((InetSocketAddress)channel.localAddress()).getAddress().getHostAddress());
+		accessPoint.setServerPort(((InetSocketAddress)channel.localAddress()).getPort());
+		
+		saveAccessPointToChannel(channel, accessPoint);
 		ChannelManager.registerChannel(channelId,ctx.channel());
 		
 		ctx.channel().closeFuture().addListener(new GenericFutureListener<ChannelFuture>() {
@@ -58,11 +71,12 @@ public class TcpMessageInboundHandler extends ChannelInboundHandlerAdapter{
 				//future.channel().close();
 			}
 		});
-		logger.info("channelActive,channelId=[{}]",channelId);
+		logger.info("channelActive,accessPoint=[{}]",JSON.toJSONString(accessPoint));
     }
+	
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-		String channelId = getChannelId(ctx.channel());
+		String channelId = getAccessPointFromChannel(ctx.channel()).getChannelId();
 		logger.info("channelInactive channelId=[{}]",channelId);
 		
 		ChannelManager.unregisterChannel(channelId);
@@ -83,8 +97,8 @@ public class TcpMessageInboundHandler extends ChannelInboundHandlerAdapter{
         }
         
         try{
-        	String channelId = getChannelId(ctx.channel());
-        	dispatcher.dispatch(channelId,message);
+        	AccessPoint accessPoint = getAccessPointFromChannel(ctx.channel());
+        	dispatcher.dispatch(accessPoint,message);
         }catch(Exception e){
         	logger.error("messageHandler.handle fail,message=[{}]",message,e);
         }
@@ -95,7 +109,7 @@ public class TcpMessageInboundHandler extends ChannelInboundHandlerAdapter{
 	public void userEventTriggered(ChannelHandlerContext ctx,Object evt) throws Exception {
 		if (evt instanceof IdleStateEvent){
 			logger.info("IdleStateEvent occured");
-			String channelId = getChannelId(ctx.channel());
+			String channelId = getAccessPointFromChannel(ctx.channel()).getChannelId();
 			ChannelManager.unregisterChannel(channelId);
 			
 			logger.info("ChannelManager.unregisterChannel,channelId=[{}]",channelId);
@@ -110,7 +124,7 @@ public class TcpMessageInboundHandler extends ChannelInboundHandlerAdapter{
 	@Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         logger.error("exceptionCaught",cause);
-        String channelId = getChannelId(ctx.channel());
+        String channelId = getAccessPointFromChannel(ctx.channel()).getChannelId();
         
         logger.info("channelId=[{}]",channelId);
         ChannelManager.unregisterChannel(channelId);
@@ -124,6 +138,22 @@ public class TcpMessageInboundHandler extends ChannelInboundHandlerAdapter{
         }
     }
 	
+	
+	private AccessPoint getAccessPointFromChannel(Channel channel){
+		AttributeKey<AccessPoint> attrKey = getAccessPointKey();
+		return channel.attr(attrKey).get();
+	}
+	
+	private void saveAccessPointToChannel(Channel channel,AccessPoint accessPoint){
+		AttributeKey<AccessPoint> attrKey = getAccessPointKey();
+		channel.attr(attrKey).set(accessPoint);
+	}
+	
+	private AttributeKey<AccessPoint> getAccessPointKey() {
+		AttributeKey<AccessPoint> attrKey = AttributeKey.valueOf("accessPoint");
+		return attrKey;
+	}
+	/*
 	private String getChannelId(Channel channel){
 		AttributeKey<String> attrKey = getChannelIdKey();
         String channelId = channel.attr(attrKey).get();
@@ -138,6 +168,6 @@ public class TcpMessageInboundHandler extends ChannelInboundHandlerAdapter{
 	private AttributeKey<String> getChannelIdKey() {
 		AttributeKey<String> attrKey = AttributeKey.valueOf("channelId");
 		return attrKey;
-	}
+	}*/
 	
 }
