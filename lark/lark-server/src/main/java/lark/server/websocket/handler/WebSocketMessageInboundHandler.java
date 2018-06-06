@@ -15,38 +15,71 @@
  */
 package lark.server.websocket.handler;
 
-import java.util.Locale;
+import java.net.InetSocketAddress;
 import java.util.UUID;
 
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
+import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.AttributeKey;
+import io.netty.util.concurrent.GenericFutureListener;
+import lark.domain.AccessPoint;
+import lark.domain.TransportProtocol;
+import lark.message.inbound.handler.dispatcher.LocalMessageHandlerDispatcher;
+import lark.message.inbound.handler.dispatcher.MessageHandlerDispatcher;
 import lark.message.outbound.ChannelManager;
 import lark.service.user.UserManager;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.alibaba.fastjson.JSON;
 
 /**
  * Echoes uppercase content of text frames.
  */
-public class WebSocketMessageInboundHandler extends SimpleChannelInboundHandler<WebSocketFrame> {
+@Sharable
+public class WebSocketMessageInboundHandler extends SimpleChannelInboundHandler<WebSocketFrame> {    
+	private static final Logger logger = LoggerFactory.getLogger(WebSocketMessageInboundHandler.class);
+	
+	private static WebSocketMessageInboundHandler instance;
+	private MessageHandlerDispatcher dispatcher; 
 
-    private static final Logger logger = LoggerFactory.getLogger(WebSocketMessageInboundHandler.class);
-
+	public static WebSocketMessageInboundHandler getInstance(){
+		if(instance == null){
+			instance = new WebSocketMessageInboundHandler();
+		}
+		return instance;
+	}
+	private WebSocketMessageInboundHandler() {
+		super();
+		dispatcher = LocalMessageHandlerDispatcher.getInstance();
+		logger.info("WebSocketMessageInboundHandler created");		
+	}
+    
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, WebSocketFrame frame) throws Exception {
         // ping and pong frames already handled
-
         if (frame instanceof TextWebSocketFrame) {
-            // Send the uppercase string back.
-            String request = ((TextWebSocketFrame) frame).text();
-            logger.info("{} received {}", ctx.channel(), request);
-            throw new UnsupportedOperationException(request);
+            String message = ((TextWebSocketFrame) frame).text();
+            logger.info("channelRead message=[{}]",message);
+            if(StringUtils.isBlank(message)){
+            	logger.info("StringUtils.isBlank(message) == true");
+            	return;
+            }
+            try{
+            	AccessPoint accessPoint = getAccessPointFromChannel(ctx.channel());
+            	dispatcher.dispatch(accessPoint,message);
+            }catch(Exception e){
+            	logger.error("messageHandler.handle fail,message=[{}]",message,e);
+            }
             //ctx.channel().writeAndFlush(request);
         } else {
             String message = "unsupported frame type: " + frame.getClass().getName();
@@ -66,10 +99,44 @@ public class WebSocketMessageInboundHandler extends SimpleChannelInboundHandler<
     	
     	if(evt instanceof WebSocketServerProtocolHandler.HandshakeComplete){
     		String channelId = UUID.randomUUID().toString();
-    		setChannelId(ctx.channel(),channelId);
+    		Channel channel = ctx.channel();
+
+    		AccessPoint accessPoint = new AccessPoint();
+    		accessPoint.setChannelId(channelId);
+    		accessPoint.setClientIp(((InetSocketAddress)channel.remoteAddress()).getAddress().getHostAddress());
+    		accessPoint.setClientPort(((InetSocketAddress)channel.remoteAddress()).getPort());
+    		accessPoint.setServerIp(((InetSocketAddress)channel.localAddress()).getAddress().getHostAddress());
+    		accessPoint.setServerPort(((InetSocketAddress)channel.localAddress()).getPort());
+    		accessPoint.setTransportProtocol(TransportProtocol.websocket);
+    		
+    		saveAccessPointToChannel(channel, accessPoint);
     		ChannelManager.registerChannel(channelId,ctx.channel());
+    		
+    		ctx.channel().closeFuture().addListener(new GenericFutureListener<ChannelFuture>() {
+    			@Override
+    			public void operationComplete(ChannelFuture future)
+    					throws Exception {
+    				logger.info("closeFuture operationComplete");
+    				//future.channel().close();
+    			}
+    		});
+    		logger.info("channelActive,accessPoint=[{}]",JSON.toJSONString(accessPoint));
     		logger.info("WebSocketServerProtocolHandler.HandshakeComplete,channelId=[{}]",channelId);
-    	}
+    	}else if (evt instanceof IdleStateEvent){
+			logger.info("IdleStateEvent occured");
+			String channelId = getAccessPointFromChannel(ctx.channel()).getChannelId();
+			ChannelManager.unregisterChannel(channelId);
+			
+			logger.info("ChannelManager.unregisterChannel,channelId=[{}]",channelId);
+			
+			UserManager.unregisterAccountByChannelId(channelId);
+			
+			try{
+	        	 ctx.close();
+	        }catch(Exception e){
+	        	logger.error("ctx.close() fail",e);
+	        }
+		}
         //ctx.fireUserEventTriggered(evt);
     }
     
@@ -77,6 +144,18 @@ public class WebSocketMessageInboundHandler extends SimpleChannelInboundHandler<
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
     	logger.info("channelInactive");
+    	String channelId = getAccessPointFromChannel(ctx.channel()).getChannelId();
+		logger.info("channelInactive channelId=[{}]",channelId);
+		
+		ChannelManager.unregisterChannel(channelId);
+        
+	    UserManager.unregisterAccountByChannelId(channelId);
+	    
+	    try{
+       	 	ctx.close();
+       }catch(Exception e){
+       		logger.error("ctx.close() fail",e);
+       }
     }
     
     @Override
@@ -89,19 +168,18 @@ public class WebSocketMessageInboundHandler extends SimpleChannelInboundHandler<
         }
     }
 
-    private String getChannelId(Channel channel){
-		AttributeKey<String> attrKey = getChannelIdKey();
-        String channelId = channel.attr(attrKey).get();
-        return channelId;
+    private AccessPoint getAccessPointFromChannel(Channel channel){
+		AttributeKey<AccessPoint> attrKey = getAccessPointKey();
+		return channel.attr(attrKey).get();
 	}
 	
-	private void setChannelId(Channel channel,String channelId){
-		AttributeKey<String> attrKey = getChannelIdKey();
-		channel.attr(attrKey).set(channelId);
+	private void saveAccessPointToChannel(Channel channel,AccessPoint accessPoint){
+		AttributeKey<AccessPoint> attrKey = getAccessPointKey();
+		channel.attr(attrKey).set(accessPoint);
 	}
-
-	private AttributeKey<String> getChannelIdKey() {
-		AttributeKey<String> attrKey = AttributeKey.valueOf("channelId");
+	
+	private AttributeKey<AccessPoint> getAccessPointKey() {
+		AttributeKey<AccessPoint> attrKey = AttributeKey.valueOf("accessPoint");
 		return attrKey;
 	}
 

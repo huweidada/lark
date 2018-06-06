@@ -52,8 +52,8 @@ public class WebSocketChannelInitializer extends ChannelInitializer<SocketChanne
         pipeline.addLast(new WebSocketServerProtocolHandler(WEBSOCKET_PATH, null, true));
         //pipeline.addLast(new WebSocketIndexPageHandler(WEBSOCKET_PATH));
         //pipeline.addLast(new WebSocketMessageInboundHandler0());
-        pipeline.addLast(new WebSocketMessageInboundHandler());
+        pipeline.addLast(WebSocketMessageInboundHandler.getInstance());
         //pipeline.addLast(new WebSocketMessageInboundHandler1());
-        pipeline.addLast(new WebSocketMessageOutboundHandler());
+        pipeline.addLast(WebSocketMessageOutboundHandler.getInstance());
     }
 }

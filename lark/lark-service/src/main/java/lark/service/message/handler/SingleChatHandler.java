@@ -40,7 +40,7 @@ public class SingleChatHandler implements MessageInboundHandler{
 		logger.info("accessPoint=[{}],message=[{}]",JSON.toJSONString(accessPoint),message);
 		String channelId = accessPoint.getChannelId();
 		
-		MessageOutboundHandler messageOutboundHandler = MessageOutboundHandlerManager.getMessageOutboundHandler("tcp");
+		MessageOutboundHandler messageOutboundHandler = MessageOutboundHandlerManager.getMessageOutboundHandler(accessPoint.getTransportProtocol());
 		
 		SingleChatResp  singleChatResp = new SingleChatResp();
 		singleChatResp.setServer(Server.serverName);

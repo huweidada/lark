@@ -2,12 +2,12 @@ package lark.message.outbound.handler.provider;
 
 import lark.domain.TransportProtocol;
 import lark.message.outbound.handler.MessageOutboundHandler;
-import lark.message.outbound.handler.TcpMessageOutboundHandler;
+import lark.message.outbound.handler.WebSocketMessageOutboundHandler;
 
-public class TcpMessageOutboundHandlerProvider implements MessageOutboundHandlerProvider {
+public class WebSocketMessageOutboundHandlerProvider implements MessageOutboundHandlerProvider {
 	
-	public TcpMessageOutboundHandlerProvider() {
-		messageOutboundHandler = new TcpMessageOutboundHandler();
+	public WebSocketMessageOutboundHandlerProvider() {
+		messageOutboundHandler = new WebSocketMessageOutboundHandler();
 	}
 
 	private MessageOutboundHandler messageOutboundHandler;
@@ -17,7 +17,7 @@ public class TcpMessageOutboundHandlerProvider implements MessageOutboundHandler
 	}
 
 	public String getName() {
-		return TransportProtocol.tcp;
+		return TransportProtocol.websocket;
 	}
 
 }

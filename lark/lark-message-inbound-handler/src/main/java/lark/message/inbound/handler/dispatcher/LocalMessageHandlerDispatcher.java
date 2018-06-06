@@ -15,7 +15,16 @@ import com.alibaba.fastjson.JSONObject;
 public class LocalMessageHandlerDispatcher implements MessageHandlerDispatcher {
 	private static final Logger logger = LoggerFactory.getLogger(LocalMessageHandlerDispatcher.class);
 	
-	public LocalMessageHandlerDispatcher() {
+	private static MessageHandlerDispatcher instance;
+	public static MessageHandlerDispatcher getInstance(){
+		if(instance == null){
+			instance = new LocalMessageHandlerDispatcher();
+		}
+		return instance;
+	}
+	
+	
+	private LocalMessageHandlerDispatcher() {
 	}
 	
 	public void dispatch(AccessPoint accessPoint, String message) {

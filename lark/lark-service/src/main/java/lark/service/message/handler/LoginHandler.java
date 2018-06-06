@@ -40,7 +40,7 @@ public class LoginHandler implements MessageInboundHandler {
 		logger.info("accessPoint=[{}],message=[{}]",JSON.toJSONString(accessPoint),message);
 		String channelId = accessPoint.getChannelId();
 		
-		MessageOutboundHandler messageOutboundHandler = MessageOutboundHandlerManager.getMessageOutboundHandler("tcp");
+		MessageOutboundHandler messageOutboundHandler = MessageOutboundHandlerManager.getMessageOutboundHandler(accessPoint.getTransportProtocol());
 		
 		LoginResp  loginResp = new LoginResp();
 		loginResp.setServer(Server.serverName);

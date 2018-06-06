@@ -6,4 +6,13 @@
     <version>1.0.0-SNAPSHOT</version>
   </parent>
   <artifactId>lark-message-outbound-handler</artifactId>
+  
+  <dependencies>
+  	<dependency>
+  		<groupId>com.cloud.im</groupId>
+	    <artifactId>lark-domain</artifactId>
+	    <version>1.0.0-SNAPSHOT</version>
+  	</dependency>
+  
+  </dependencies>
 </project>

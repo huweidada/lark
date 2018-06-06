@@ -38,7 +38,7 @@ public class HeartbeatHandler implements MessageInboundHandler{
 		logger.info("accessPoint=[{}],message=[{}]",JSON.toJSONString(accessPoint),message);
 		String channelId = accessPoint.getChannelId();
 		
-		MessageOutboundHandler messageOutboundHandler = MessageOutboundHandlerManager.getMessageOutboundHandler("tcp");
+		MessageOutboundHandler messageOutboundHandler = MessageOutboundHandlerManager.getMessageOutboundHandler(accessPoint.getTransportProtocol());
 		
 		HeartbeatResp  heartbeatResp = new HeartbeatResp();
 		heartbeatResp.setServer(Server.serverName);

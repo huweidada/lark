@@ -4,6 +4,8 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.net.URL;
 
 import javax.swing.ImageIcon;
@@ -21,7 +23,7 @@ public class LoginFrame extends JFrame{
 	
 	public LoginFrame() throws HeadlessException {
 		super();
-		setTitle("欢迎登录百灵鸟");
+		setTitle("欢迎来到jimi的世界");
 		
 		GridBagLayout layout = new GridBagLayout();
 		setLayout(layout);
@@ -35,7 +37,7 @@ public class LoginFrame extends JFrame{
 		JPanel accountPanel = new JPanel(); 
 		accountPanel.setLayout(new GridLayout(1,3,0,0));
 		JLabel accountLabel = new JLabel("账号");
-        JTextField accountTextField = new JTextField(15);
+        final JTextField accountTextField = new JTextField(15);
         accountTextField.setSize(150, 25);
         
         JLabel registerLabel = new JLabel("用户注册");
@@ -52,7 +54,7 @@ public class LoginFrame extends JFrame{
 		passwordPanel.setLayout(new GridLayout(1,3,0,0));
 		
 		JLabel passwordLabel = new JLabel("密码");
-        JPasswordField passwordTextField = new JPasswordField(15);
+		final JPasswordField passwordTextField = new JPasswordField(15);
         JLabel forgetLabel = new JLabel("忘记密码");
         
         passwordPanel.add(passwordLabel);
@@ -95,6 +97,17 @@ public class LoginFrame extends JFrame{
 
         JButton setButton = new JButton("设置");
         JButton loginButton = new JButton("登录");
+        
+        loginButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String userName = accountTextField.getText();
+				String password = String.valueOf(passwordTextField.getPassword());
+				
+				System.out.println("userName=" + userName);
+				System.out.println("password=" + password);
+			}
+		});
         
         bottomPanel.add(setButton);
         bottomPanel.add(loginButton);

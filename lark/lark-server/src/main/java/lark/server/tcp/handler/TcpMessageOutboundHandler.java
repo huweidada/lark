@@ -29,18 +29,18 @@ public class TcpMessageOutboundHandler extends ChannelOutboundHandlerAdapter{
 	private TcpMessageOutboundHandler() {
 		MessageOutboundHandlerProvider tcpMessageHandlerProvider = new TcpMessageOutboundHandlerProvider();
 		MessageOutboundHandlerManager.registerProvider(tcpMessageHandlerProvider.getName(), tcpMessageHandlerProvider);
-		logger.info("MessageOutboundHandler created");
+		logger.info("TcpMessageOutboundHandler created");
 	}
 	
 	@Override
     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-		logger.info("MessageOutboundHandler write begin");
+		logger.info("TcpMessageOutboundHandler write begin");
         ctx.write(msg, promise);
     }
 	
 	@Override
     public void flush(ChannelHandlerContext ctx) throws Exception {
-		logger.info("MessageOutboundHandler flush begin");
+		logger.info("TcpMessageOutboundHandler flush begin");
         ctx.flush();
     }
 	

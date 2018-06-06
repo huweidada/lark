@@ -34,7 +34,7 @@ public class ListUserHandler implements MessageInboundHandler{
 		logger.info("accessPoint=[{}],message=[{}]",JSON.toJSONString(accessPoint),message);
 		String channelId = accessPoint.getChannelId();
 		
-		MessageOutboundHandler messageOutboundHandler = MessageOutboundHandlerManager.getMessageOutboundHandler("tcp");
+		MessageOutboundHandler messageOutboundHandler = MessageOutboundHandlerManager.getMessageOutboundHandler(accessPoint.getTransportProtocol());
 		
 		ListUserResp  listUserResp = new ListUserResp();
 		listUserResp.setServer(Server.serverName);

@@ -13,5 +13,5 @@ public class AccessPoint implements Serializable{
 	@Getter @Setter private int serverPort;
 	@Getter @Setter private String clientIp;
 	@Getter @Setter private int clientPort;
-	
+	@Getter @Setter private String transportProtocol;
 }

@@ -1,6 +1,7 @@
 package lark.server;
 
 import lark.server.websocket.handler.WebSocketChannelInitializer;
+import lark.service.message.context.MessageContext;
 import lark.tools.NamedThreadFactory;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -15,6 +16,11 @@ import org.slf4j.LoggerFactory;
 
 public class LarkWebsocketBootstrap {
 	private static final Logger logger = LoggerFactory.getLogger(LarkWebsocketBootstrap.class);
+	
+	public LarkWebsocketBootstrap init(){
+		MessageContext.registerMessageHandlerProvider();
+		return this;
+	}
 	
 	public void start(short port, int workThreadNumber) throws Exception{
 		EventLoopGroup bossGroup = new NioEventLoopGroup(1, new NamedThreadFactory("netty-boss"));

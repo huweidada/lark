@@ -4,6 +4,7 @@ import java.net.InetSocketAddress;
 import java.util.UUID;
 
 import lark.domain.AccessPoint;
+import lark.domain.TransportProtocol;
 import lark.message.inbound.handler.dispatcher.LocalMessageHandlerDispatcher;
 import lark.message.inbound.handler.dispatcher.MessageHandlerDispatcher;
 import lark.message.outbound.ChannelManager;
@@ -44,8 +45,8 @@ public class TcpMessageInboundHandler extends ChannelInboundHandlerAdapter{
 	}
 	private TcpMessageInboundHandler() {
 		super();
-		dispatcher = new LocalMessageHandlerDispatcher();
-		logger.info("MessageRouteHandler created");		
+		dispatcher = LocalMessageHandlerDispatcher.getInstance();
+		logger.info("TcpMessageInboundHandler created");		
 	}
 	
 	@Override
@@ -59,6 +60,7 @@ public class TcpMessageInboundHandler extends ChannelInboundHandlerAdapter{
 		accessPoint.setClientPort(((InetSocketAddress)channel.remoteAddress()).getPort());
 		accessPoint.setServerIp(((InetSocketAddress)channel.localAddress()).getAddress().getHostAddress());
 		accessPoint.setServerPort(((InetSocketAddress)channel.localAddress()).getPort());
+		accessPoint.setTransportProtocol(TransportProtocol.tcp);
 		
 		saveAccessPointToChannel(channel, accessPoint);
 		ChannelManager.registerChannel(channelId,ctx.channel());
@@ -82,6 +84,12 @@ public class TcpMessageInboundHandler extends ChannelInboundHandlerAdapter{
 		ChannelManager.unregisterChannel(channelId);
         
 	    UserManager.unregisterAccountByChannelId(channelId);
+	    
+	    try{
+       	 	ctx.close();
+       }catch(Exception e){
+       		logger.error("ctx.close() fail",e);
+       }
 	}
 	
 	@Override
@@ -116,7 +124,11 @@ public class TcpMessageInboundHandler extends ChannelInboundHandlerAdapter{
 			
 			UserManager.unregisterAccountByChannelId(channelId);
 			
-			ctx.close();
+			try{
+	        	 ctx.close();
+	        }catch(Exception e){
+	        	logger.error("ctx.close() fail",e);
+	        }
 		}
 	}
 	
