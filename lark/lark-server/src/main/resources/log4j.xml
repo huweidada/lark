@@ -11,10 +11,10 @@
 	</appender>
 	
 	<appender name="R" class="org.apache.log4j.RollingFileAppender">     
-		<param name="File" value="/home/admin/Log/message.log" />
-		<param name="DatePattern" value="'.'yyyy-MM-dd'.log'" />
-      <param name="MaxFileSize" value="1024MB" />
-	   <param name="MaxBackupIndex" value="10" />
+		<param name="File" value="/home/admin/Log/lark.log" />
+		<!-- <param name="DatePattern" value="'.'yyyy-MM-dd'.log'" /> -->
+        <param name="MaxFileSize" value="1024MB" />
+	    <param name="MaxBackupIndex" value="10" />
 		<layout class="org.apache.log4j.PatternLayout">     
 			<param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %t %5p [%c:%L] - %m%n" />     
 		</layout>     
