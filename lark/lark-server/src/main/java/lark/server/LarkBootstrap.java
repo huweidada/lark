@@ -3,7 +3,7 @@ package lark.server;
 import java.net.InetSocketAddress;
 
 import lark.server.tcp.handler.TcpChannelInitializerHandler;
-import lark.service.message.context.MessageContext;
+import lark.service.message.handler.provider.register.HandlerProviderRegister;
 import lark.tools.NamedThreadFactory;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -19,7 +19,7 @@ public class LarkBootstrap {
 	private static final Logger logger = LoggerFactory.getLogger(LarkBootstrap.class);
 	
 	public LarkBootstrap init(){
-		MessageContext.registerMessageHandlerProvider();
+		HandlerProviderRegister.registerMessageHandlerProvider();
 		return this;
 	}
 	

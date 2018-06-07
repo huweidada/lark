@@ -1,12 +1,12 @@
-package lark.service.message.provider;
+package lark.service.message.handler.provider;
 
 import lark.message.inbound.handler.MessageInboundHandler;
 import lark.message.inbound.handler.provider.MessageInboundHandlerProvider;
-import lark.service.message.handler.LoginHandler;
+import lark.service.message.handler.HeartbeatHandler;
 
-public class LoginHandlerProvider implements MessageInboundHandlerProvider {
-	public LoginHandlerProvider() {
-		this.handler = new LoginHandler();
+public class HeartbeatHandlerProvider implements MessageInboundHandlerProvider {
+	public HeartbeatHandlerProvider() {
+		this.handler = new HeartbeatHandler();
 	}
 
 	private MessageInboundHandler handler;
@@ -18,7 +18,7 @@ public class LoginHandlerProvider implements MessageInboundHandlerProvider {
 	
 	
 	public String getName(){
-		return "login";
+		return "heartbeat";
 	}
 	
 }

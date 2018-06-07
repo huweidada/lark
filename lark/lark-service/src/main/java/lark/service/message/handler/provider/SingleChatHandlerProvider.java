@@ -1,24 +1,22 @@
-package lark.service.message.provider;
+package lark.service.message.handler.provider;
 
 import lark.message.inbound.handler.MessageInboundHandler;
 import lark.message.inbound.handler.provider.MessageInboundHandlerProvider;
-import lark.service.message.handler.HeartbeatHandler;
+import lark.service.message.handler.SingleChatHandler;
 
-public class HeartbeatHandlerProvider implements MessageInboundHandlerProvider {
-	public HeartbeatHandlerProvider() {
-		this.handler = new HeartbeatHandler();
+
+public class SingleChatHandlerProvider implements MessageInboundHandlerProvider {
+	public SingleChatHandlerProvider() {
+		this.handler = new SingleChatHandler();
 	}
-
 	private MessageInboundHandler handler;
-	
 	
 	public MessageInboundHandler getMessageInboundHandler() {
 		return handler;
 	}
 	
-	
 	public String getName(){
-		return "heartbeat";
+		return "singleChat";
 	}
 	
 }

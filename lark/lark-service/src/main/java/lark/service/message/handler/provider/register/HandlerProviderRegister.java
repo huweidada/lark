@@ -1,13 +1,13 @@
-package lark.service.message.context;
+package lark.service.message.handler.provider.register;
 
 import lark.message.inbound.handler.MessageInboundHandlerManager;
 import lark.message.inbound.handler.provider.MessageInboundHandlerProvider;
-import lark.service.message.provider.HeartbeatHandlerProvider;
-import lark.service.message.provider.ListUserHandlerProvider;
-import lark.service.message.provider.LoginHandlerProvider;
-import lark.service.message.provider.SingleChatHandlerProvider;
+import lark.service.message.handler.provider.HeartbeatHandlerProvider;
+import lark.service.message.handler.provider.ListUserHandlerProvider;
+import lark.service.message.handler.provider.LoginHandlerProvider;
+import lark.service.message.handler.provider.SingleChatHandlerProvider;
 
-public class MessageContext {
+public class HandlerProviderRegister {
 	public static void registerMessageHandlerProvider(){
 		MessageInboundHandlerProvider loginHandlerProvider = new LoginHandlerProvider();
 		MessageInboundHandlerManager.registerProvider(loginHandlerProvider.getName(), loginHandlerProvider);

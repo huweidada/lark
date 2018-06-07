@@ -1,7 +1,7 @@
 package lark.server;
 
 import lark.server.websocket.handler.WebSocketChannelInitializer;
-import lark.service.message.context.MessageContext;
+import lark.service.message.handler.provider.register.HandlerProviderRegister;
 import lark.tools.NamedThreadFactory;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -18,7 +18,7 @@ public class LarkWebsocketBootstrap {
 	private static final Logger logger = LoggerFactory.getLogger(LarkWebsocketBootstrap.class);
 	
 	public LarkWebsocketBootstrap init(){
-		MessageContext.registerMessageHandlerProvider();
+		HandlerProviderRegister.registerMessageHandlerProvider();
 		return this;
 	}
 	

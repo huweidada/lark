@@ -1,4 +1,4 @@
-package lark.service.message.provider;
+package lark.service.message.handler.provider;
 
 import lark.message.inbound.handler.MessageInboundHandler;
 import lark.message.inbound.handler.provider.MessageInboundHandlerProvider;
