@@ -1,6 +1,7 @@
 package lark.message.inbound.handler.dispatcher;
 
 import lark.domain.AccessPoint;
+import lark.domain.message.MessageReqHeader;
 import lark.message.inbound.handler.MessageInboundHandler;
 import lark.message.inbound.handler.MessageInboundHandlerManager;
 
@@ -9,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 
 
 public class LocalMessageHandlerDispatcher implements MessageHandlerDispatcher {
@@ -27,16 +27,17 @@ public class LocalMessageHandlerDispatcher implements MessageHandlerDispatcher {
 	private LocalMessageHandlerDispatcher() {
 	}
 	
+	@SuppressWarnings("rawtypes")
 	public void dispatch(AccessPoint accessPoint, String message) {
-		JSONObject jsonMessage = null;
-        try{
-        	jsonMessage = JSON.parseObject(message);
-        }catch(Exception e){
-        	logger.error("message=[{}],JSON.parseObject fail",message,e);
+		MessageReqHeader messageReqHeader = null;
+		try{
+			messageReqHeader = JSON.parseObject(message, MessageReqHeader.class);
+		}catch(Exception e){
+			logger.error("message=[{}],JSON.parseObject(message, MessageReqHeader.class) fail",message,e);
         	return;
-        }
+		}
         
-        String type = jsonMessage.getString("type");
+        String type = messageReqHeader.getType();
         if(StringUtils.isBlank(type)){
         	logger.error("StringUtils.isBlank(type)==true");
         	logger.error("message=[{}]",message);
@@ -52,6 +53,7 @@ public class LocalMessageHandlerDispatcher implements MessageHandlerDispatcher {
         	messageInboundHandler.handle(accessPoint,message);
         }catch(Exception e){
         	logger.error("messageHandler.handle fail,message=[{}]",message,e);
+        	return;
         }
 	}
 
