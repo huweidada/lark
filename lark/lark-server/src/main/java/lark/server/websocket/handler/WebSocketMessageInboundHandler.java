@@ -124,13 +124,6 @@ public class WebSocketMessageInboundHandler extends SimpleChannelInboundHandler<
     		logger.info("WebSocketServerProtocolHandler.HandshakeComplete,channelId=[{}]",channelId);
     	}else if (evt instanceof IdleStateEvent){
 			logger.info("IdleStateEvent occured");
-			String channelId = getAccessPointFromChannel(ctx.channel()).getChannelId();
-			ChannelManager.unregisterChannel(channelId);
-			
-			logger.info("ChannelManager.unregisterChannel,channelId=[{}]",channelId);
-			
-			UserManager.unregisterAccountByChannelId(channelId);
-			
 			try{
 	        	 ctx.close();
 	        }catch(Exception e){
@@ -150,12 +143,6 @@ public class WebSocketMessageInboundHandler extends SimpleChannelInboundHandler<
 		ChannelManager.unregisterChannel(channelId);
         
 	    UserManager.unregisterAccountByChannelId(channelId);
-	    
-	    try{
-       	 	ctx.close();
-       }catch(Exception e){
-       		logger.error("ctx.close() fail",e);
-       }
     }
     
     @Override

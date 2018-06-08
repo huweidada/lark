@@ -84,12 +84,6 @@ public class TcpMessageInboundHandler extends ChannelInboundHandlerAdapter{
 		ChannelManager.unregisterChannel(channelId);
         
 	    UserManager.unregisterAccountByChannelId(channelId);
-	    
-	    try{
-       	 	ctx.close();
-       }catch(Exception e){
-       		logger.error("ctx.close() fail",e);
-       }
 	}
 	
 	@Override
@@ -117,13 +111,6 @@ public class TcpMessageInboundHandler extends ChannelInboundHandlerAdapter{
 	public void userEventTriggered(ChannelHandlerContext ctx,Object evt) throws Exception {
 		if (evt instanceof IdleStateEvent){
 			logger.info("IdleStateEvent occured");
-			String channelId = getAccessPointFromChannel(ctx.channel()).getChannelId();
-			ChannelManager.unregisterChannel(channelId);
-			
-			logger.info("ChannelManager.unregisterChannel,channelId=[{}]",channelId);
-			
-			UserManager.unregisterAccountByChannelId(channelId);
-			
 			try{
 	        	 ctx.close();
 	        }catch(Exception e){
@@ -136,13 +123,6 @@ public class TcpMessageInboundHandler extends ChannelInboundHandlerAdapter{
 	@Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         logger.error("exceptionCaught",cause);
-        String channelId = getAccessPointFromChannel(ctx.channel()).getChannelId();
-        
-        logger.info("channelId=[{}]",channelId);
-        ChannelManager.unregisterChannel(channelId);
-        
-        UserManager.unregisterAccountByChannelId(channelId);
-        
         try{
         	 ctx.close();
         }catch(Exception e){

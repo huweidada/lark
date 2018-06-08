@@ -34,7 +34,7 @@ public class WebSocketMessageOutboundHandler implements MessageOutboundHandler {
 		ByteBufAllocator alloc = channel.alloc();
 		ByteBuf byteBuf = alloc.buffer();
 		byteBuf.writeCharSequence(message, CharsetUtil.UTF_8);
-		byteBuf.writeCharSequence("\r\n", CharsetUtil.UTF_8);
+		//byteBuf.writeCharSequence("\r\n", CharsetUtil.UTF_8);
 		
 		try{
 			channel.writeAndFlush(byteBuf);
