@@ -1,14 +1,13 @@
-package lark.domain.message.login;
+package lark.domain.message.contact;
 
 import java.io.Serializable;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
-@ToString
-public class LoginRespBody implements Serializable{
+public class ListContactReqBody implements Serializable{
 	private static final long serialVersionUID = 1L;
+	
 	@Getter @Setter private String ticket;
-	@Getter @Setter private String userId;
+	
 }

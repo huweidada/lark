@@ -15,6 +15,8 @@
  */
 package lark.server.websocket.handler;
 
+import java.util.concurrent.TimeUnit;
+
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
@@ -23,6 +25,7 @@ import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketServerCompressionHandler;
 import io.netty.handler.ssl.SslContext;
+import io.netty.handler.timeout.IdleStateHandler;
 
 /**
  */
@@ -42,18 +45,19 @@ public class WebSocketChannelInitializer extends ChannelInitializer<SocketChanne
 
     @Override
     public void initChannel(SocketChannel ch) throws Exception {
-        ChannelPipeline pipeline = ch.pipeline();
+        ChannelPipeline channelPipeline = ch.pipeline();
+        channelPipeline.addLast(new IdleStateHandler(0, 0, 60, TimeUnit.SECONDS));
         if (sslCtx != null) {
-            pipeline.addLast(sslCtx.newHandler(ch.alloc()));
+            channelPipeline.addLast(sslCtx.newHandler(ch.alloc()));
         }
-        pipeline.addLast(new HttpServerCodec());
-        pipeline.addLast(new HttpObjectAggregator(65536));
-        pipeline.addLast(new WebSocketServerCompressionHandler());
-        pipeline.addLast(new WebSocketServerProtocolHandler(WEBSOCKET_PATH, null, true));
+        channelPipeline.addLast(new HttpServerCodec());
+        channelPipeline.addLast(new HttpObjectAggregator(65536));
+        channelPipeline.addLast(new WebSocketServerCompressionHandler());
+        channelPipeline.addLast(new WebSocketServerProtocolHandler(WEBSOCKET_PATH, null, true));
         //pipeline.addLast(new WebSocketIndexPageHandler(WEBSOCKET_PATH));
         //pipeline.addLast(new WebSocketMessageInboundHandler0());
-        pipeline.addLast(WebSocketMessageInboundHandler.getInstance());
+        channelPipeline.addLast(WebSocketMessageInboundHandler.getInstance());
         //pipeline.addLast(new WebSocketMessageInboundHandler1());
-        pipeline.addLast(WebSocketMessageOutboundHandler.getInstance());
+        channelPipeline.addLast(WebSocketMessageOutboundHandler.getInstance());
     }
 }

@@ -11,7 +11,7 @@
 	</appender>
 	
 	<appender name="R" class="org.apache.log4j.RollingFileAppender">     
-		<param name="File" value="/home/admin/Log/lark.log" />
+		<param name="File" value="/home/log/lark.log" />
         <param name="MaxFileSize" value="1024MB" />
 	    <param name="MaxBackupIndex" value="10" />
 		<layout class="org.apache.log4j.PatternLayout">     

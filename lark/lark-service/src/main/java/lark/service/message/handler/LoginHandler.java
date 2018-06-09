@@ -116,6 +116,7 @@ public class LoginHandler implements MessageInboundHandler {
 		
 		LoginRespBody loginRespBody = new LoginRespBody();
 		loginRespBody.setTicket(ticket);
+		loginRespBody.setUserId(userId);
 		loginResp.setBody(loginRespBody);
 		loginResp.setStatusCode(ServerStatusCode.success);
 		messageOutboundHandler.write(channelId, JSON.toJSONString(loginResp));
