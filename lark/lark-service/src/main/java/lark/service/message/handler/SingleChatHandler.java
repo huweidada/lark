@@ -25,6 +25,8 @@ import lark.service.user.UserManager;
 public class SingleChatHandler implements MessageInboundHandler{
 	private static final Logger logger = LoggerFactory.getLogger(SingleChatHandler.class);
 	private static final String type = "singleChat";
+	private static final String pushType = "singleChatPush";
+	
 	private TicketService ticketService;
 	
 	public SingleChatHandler() {
@@ -146,7 +148,7 @@ public class SingleChatHandler implements MessageInboundHandler{
 		
 		SingleChatPush singleChatPush = new SingleChatPush();
 		singleChatPush.setServer(Server.serverName);
-		singleChatPush.setType(type);
+		singleChatPush.setType(pushType);
 		singleChatPush.setTime(currentTimeMillis);
 		singleChatPush.setVersion(Server.version);
 		singleChatPush.setTransactionId(singleChatReq.getTransactionId());

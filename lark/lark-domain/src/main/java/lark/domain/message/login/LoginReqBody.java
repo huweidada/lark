@@ -9,7 +9,6 @@ import lombok.ToString;
 @ToString
 public class LoginReqBody implements Serializable{
 	private static final long serialVersionUID = 1L;
-	@Getter @Setter private int version;
 	@Getter @Setter private int authType;
 	@Getter @Setter private String userName;
 	@Getter @Setter private String password;
@@ -17,7 +16,7 @@ public class LoginReqBody implements Serializable{
 	
 	
 	@Getter @Setter private String os;
-	//ios，android，web，pc，mweb
+	//ios，android，mweb，pcweb，pc，
 	@Getter @Setter private String platform;
 	//xx.xx.xx
 	@Getter @Setter private String clientVersion;

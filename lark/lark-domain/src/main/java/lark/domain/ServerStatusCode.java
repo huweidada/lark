@@ -15,7 +15,7 @@ public class ServerStatusCode {
 	public static int ipBlacklist = 7;//命中了ip黑名单
 	public static int macBlacklist = 8;//命中了mac黑名单
 	
-	//20-40段专门划分用于登录相关的错误码，因为登录认证相关的错误码所有的协议都会引用
+	//10-40段专门划分用于登录相关的错误码，因为登录认证相关的错误码所有的协议都会引用
 	public static int notLogin = 10;//用户未登录
 	public static int ticketTimeout = 11;//票据过期
 	public static int ticketError = 12;//票据非法
