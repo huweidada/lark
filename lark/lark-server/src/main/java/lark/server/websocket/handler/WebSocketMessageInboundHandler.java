@@ -147,7 +147,7 @@ public class WebSocketMessageInboundHandler extends SimpleChannelInboundHandler<
     
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        logger.error("WebSocketMessageInboundHandler exceptionCaught");
+        logger.error("exceptionCaught",cause);
         try{
         	 ctx.close();
         }catch(Exception e){
