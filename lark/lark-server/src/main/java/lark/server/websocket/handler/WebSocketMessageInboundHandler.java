@@ -137,7 +137,14 @@ public class WebSocketMessageInboundHandler extends SimpleChannelInboundHandler<
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
     	logger.info("channelInactive");
-    	String channelId = getAccessPointFromChannel(ctx.channel()).getChannelId();
+    	AccessPoint accessPoint = getAccessPointFromChannel(ctx.channel());
+    	if(accessPoint == null){
+    		//这种情况表示的是websocket握手没有完成
+    		logger.warn("accessPoint == null");
+    		return;
+    	}
+    	
+    	String channelId = accessPoint.getChannelId();
 		logger.info("channelInactive channelId=[{}]",channelId);
 		
 		ChannelManager.unregisterChannel(channelId);
