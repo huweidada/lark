@@ -1,13 +1,18 @@
 package lark.client.frame;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.net.URL;
+import java.util.Scanner;
+import java.util.UUID;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -18,11 +23,31 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.alibaba.fastjson.JSON;
+
+import lark.client.net.MessageHandlerDispatcher;
+import lark.client.net.MessageInboundHandler;
+import lark.client.net.NetClient;
+import lark.domain.message.login.LoginReq;
+import lark.domain.message.login.LoginReqBody;
+import lark.domain.message.login.LoginResp;
+
 public class LoginFrame extends JFrame{
-	private static final long serialVersionUID = 1L;
+	private static final Logger logger = LoggerFactory.getLogger(LoginFrame.class);
 	
-	public LoginFrame() throws HeadlessException {
+	private static final long serialVersionUID = 1L;
+	private NetClient netClient;
+	
+	private JTextField accountTextField;
+	private JPasswordField passwordTextField;
+	private String loginTransactionId = "";
+	
+	public LoginFrame(NetClient netClient) throws HeadlessException {
 		super();
+		this.netClient = netClient;
 		setTitle("欢迎来到jimi的世界");
 		
 		GridBagLayout layout = new GridBagLayout();
@@ -34,32 +59,44 @@ public class LoginFrame extends JFrame{
 		imageLogo.setSize(360, 175);
 		add(imageLogo);
 		/**************************************/
-		JPanel accountPanel = new JPanel(); 
-		accountPanel.setLayout(new GridLayout(1,3,0,0));
-		JLabel accountLabel = new JLabel("账号");
-        final JTextField accountTextField = new JTextField(15);
-        accountTextField.setSize(150, 25);
+		JPanel accountPanel = new JPanel();
+		
+		BoxLayout accountPanelBoxLayout = new BoxLayout(accountPanel,BoxLayout.X_AXIS);
+		accountPanel.setLayout(accountPanelBoxLayout);
+		JLabel accountLabel = new JLabel("账号:");
+		
+        accountTextField = new JTextField();
+        accountTextField.setSize(100, 25);
         
         JLabel registerLabel = new JLabel("用户注册");
         
+        accountPanel.add(Box.createHorizontalStrut(60));
         accountPanel.add(accountLabel);
+        accountPanel.add(Box.createHorizontalStrut(5));
         accountPanel.add(accountTextField);
+        accountPanel.add(Box.createHorizontalStrut(5));
         accountPanel.add(registerLabel);
+        accountPanel.add(Box.createHorizontalStrut(60));
         
         accountPanel.setSize(360, 30);
         
         add(accountPanel);
         /**************************************/
         JPanel passwordPanel = new JPanel(); 
-		passwordPanel.setLayout(new GridLayout(1,3,0,0));
-		
-		JLabel passwordLabel = new JLabel("密码");
-		final JPasswordField passwordTextField = new JPasswordField(15);
+        BoxLayout passwordPanelBoxLayout = new BoxLayout(passwordPanel,BoxLayout.X_AXIS);
+        passwordPanel.setLayout(passwordPanelBoxLayout);
+        
+		JLabel passwordLabel = new JLabel("密码:");
+		passwordTextField = new JPasswordField(0);
         JLabel forgetLabel = new JLabel("忘记密码");
         
+        passwordPanel.add(Box.createHorizontalStrut(60));
         passwordPanel.add(passwordLabel);
+        passwordPanel.add(Box.createHorizontalStrut(5));
         passwordPanel.add(passwordTextField);
+        passwordPanel.add(Box.createHorizontalStrut(5));
         passwordPanel.add(forgetLabel);
+        passwordPanel.add(Box.createHorizontalStrut(60));
         
         passwordPanel.setSize(360, 30);
         
@@ -68,12 +105,12 @@ public class LoginFrame extends JFrame{
 		
         //登录设置  
         JPanel statusPanel = new JPanel();  
-        statusPanel.setLayout(new GridLayout(1,4,0,0));
+        BoxLayout statusPanelBoxLayout = new BoxLayout(statusPanel,BoxLayout.X_AXIS);
+        statusPanel.setLayout(statusPanelBoxLayout);
         
-        JLabel statusLabel = new JLabel("状态");
+        JLabel statusLabel = new JLabel("状态:");
 
         JComboBox<String> statusComboBox = new JComboBox<String>();  
-        statusComboBox.addItem("Q我");  
         statusComboBox.addItem("在线");  
         statusComboBox.addItem("隐身");  
         statusComboBox.addItem("离线");  
@@ -81,10 +118,15 @@ public class LoginFrame extends JFrame{
         JCheckBox  rememberPassword = new JCheckBox("记住密码");
         JCheckBox  autoLogon = new JCheckBox("自动登录");
          
+        statusPanel.add(Box.createHorizontalStrut(60));
         statusPanel.add(statusLabel);
+        statusPanel.add(Box.createHorizontalStrut(5));
         statusPanel.add(statusComboBox);
+        statusPanel.add(Box.createHorizontalStrut(5));
         statusPanel.add(rememberPassword);
+        statusPanel.add(Box.createHorizontalStrut(5));
         statusPanel.add(autoLogon);
+        statusPanel.add(Box.createHorizontalStrut(30));
         
         statusPanel.setSize(360, 30);
         
@@ -93,24 +135,22 @@ public class LoginFrame extends JFrame{
           
         //底部登录按钮  
         JPanel bottomPanel = new JPanel();  
-        bottomPanel.setLayout(new GridLayout(1,2,0,0));  
+        BoxLayout bottomPanelBoxLayout = new BoxLayout(bottomPanel,BoxLayout.X_AXIS);
+        bottomPanel.setLayout(bottomPanelBoxLayout);
 
         JButton setButton = new JButton("设置");
+        setButton.setPreferredSize(new Dimension(100, 30));
+
         JButton loginButton = new JButton("登录");
+        loginButton.setPreferredSize(new Dimension(100, 30));
         
-        loginButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				String userName = accountTextField.getText();
-				String password = String.valueOf(passwordTextField.getPassword());
-				
-				System.out.println("userName=" + userName);
-				System.out.println("password=" + password);
-			}
-		});
+        loginButton.addActionListener(new LoginButtonActionListener());
         
+        bottomPanel.add(Box.createHorizontalGlue());
         bottomPanel.add(setButton);
+        bottomPanel.add(Box.createHorizontalGlue());
         bottomPanel.add(loginButton);
+        bottomPanel.add(Box.createHorizontalGlue());
         
         bottomPanel.setSize(360, 30);
         
@@ -157,4 +197,99 @@ public class LoginFrame extends JFrame{
 		
 	}
 	
+	public class LoginButtonActionListener implements ActionListener{
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			String userName = accountTextField.getText();
+			String password = String.valueOf(passwordTextField.getPassword());
+			
+			LoginReqBody body = new LoginReqBody();
+			
+			body.setAuthType(1);
+			body.setUserName(userName);
+			body.setPassword(password);
+			body.setOs(System.getProperty("os.name"));
+			body.setPlatform("pc");
+			body.setClientVersion("lark-clent-pc-1.0.0");
+			body.setNetType(netClient.getNetType());
+			body.setClientIp(netClient.getLocalIp());
+			body.setClientPort(netClient.getLocalPort());
+			body.setDeviceNumber(getCpuNumber());
+			
+			loginTransactionId = UUID.randomUUID().toString();
+			LoginReq loginReq = new LoginReq();
+			loginReq.setTransactionId(loginTransactionId);
+			loginReq.setType("login");
+			loginReq.setVersion(1);
+			loginReq.setTime(System.currentTimeMillis());
+			loginReq.setBody(body);
+			
+			String loginMessage = JSON.toJSONString(loginReq);
+			
+			
+			MessageHandlerDispatcher.registerMessageHandler("login", new LoginMessageHandler());
+			int returnCode = netClient.send(loginMessage);
+			if(returnCode < 0){
+				logger.error("netClient.send fail");
+			}else{
+				logger.info("netClient.send success");
+			}
+		}
+	}	
+
+	//理论上这个handler负责隐藏登录窗体，并且注册一个心跳处理器
+	public class LoginMessageHandler implements MessageInboundHandler{
+		@Override
+		public void handle(String message) {
+			LoginResp loginResp = JSON.parseObject(message,LoginResp.class);
+			if(loginResp.getStatusCode() == 1 && loginTransactionId.equals(loginResp.getTransactionId())){
+				logger.info("登录成功");
+				netClient.startHeartbeat(loginResp.getBody().getTicket());
+			}
+			
+		}
+		
+	}
+	
+	
+	 private String getCpuNumber(){  
+        Process process;
+		try {
+			process = Runtime.getRuntime().exec(new String[] { "wmic", "cpu", "get", "ProcessorId" });
+		} catch (IOException e) {
+			return "";
+		}
+        try {
+			process.getOutputStream().close();
+		} catch (IOException e) {
+			return "";
+		}  
+        Scanner sc = new Scanner(process.getInputStream());  
+        sc.next();  
+        String cpuNumber = sc.next();  
+        sc.close();
+        return cpuNumber;
+	 }  
+	
+	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

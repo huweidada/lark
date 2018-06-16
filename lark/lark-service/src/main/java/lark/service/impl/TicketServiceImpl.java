@@ -193,14 +193,18 @@ public class TicketServiceImpl implements TicketService {
 	}
 
 	private void cleanExpiredTicket(){
+		long expiredTicketNumber = 0;
 		long currentTimeSeconds = System.currentTimeMillis()/1000;
 		Iterator<Map.Entry<String,Long>> iter = ticketMap.entrySet().iterator();
 		while(iter.hasNext()){
 			Map.Entry<String,Long> entry = iter.next();
 			if(entry.getValue() - currentTimeSeconds < 0){
 				iter.remove();
+				expiredTicketNumber++;
 			}
 		}
+		
+		logger.info("expiredTicketNumber=[{}]",expiredTicketNumber);
 	}
 	
 	
