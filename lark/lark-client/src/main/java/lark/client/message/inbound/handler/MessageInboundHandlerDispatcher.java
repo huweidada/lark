@@ -1,4 +1,4 @@
-package lark.client.net;
+package lark.client.message.inbound.handler;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -11,8 +11,8 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
 
-public class MessageHandlerDispatcher {
-	private static final Logger logger = LoggerFactory.getLogger(MessageHandlerDispatcher.class);
+public class MessageInboundHandlerDispatcher {
+	private static final Logger logger = LoggerFactory.getLogger(MessageInboundHandlerDispatcher.class);
 	private static Map<String,MessageInboundHandler> messageHandlerMap = new ConcurrentHashMap<String, MessageInboundHandler>();
 	@SuppressWarnings("rawtypes")
 	public static void dispatch(String message){

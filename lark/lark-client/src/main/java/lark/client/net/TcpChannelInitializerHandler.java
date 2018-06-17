@@ -10,7 +10,7 @@ public class TcpChannelInitializerHandler  extends ChannelInitializer<SocketChan
 	protected void initChannel(SocketChannel ch) throws Exception {
 		ChannelPipeline channelPipeline = ch.pipeline();
 		channelPipeline.addLast(new LineBasedFrameDecoder(64 * 1024));
-		channelPipeline.addLast(TcpMessageInboundHandler.getInstance());
+		channelPipeline.addLast(TcpChannelMessageInboundHandler.getInstance());
 	}
 
 }

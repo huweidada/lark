@@ -6,9 +6,7 @@ import java.awt.HeadlessException;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.net.URL;
-import java.util.Scanner;
 import java.util.UUID;
 
 import javax.swing.Box;
@@ -28,12 +26,14 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
 
-import lark.client.net.MessageHandlerDispatcher;
-import lark.client.net.MessageInboundHandler;
+import lark.client.domain.Application;
+import lark.client.message.inbound.handler.MessageInboundHandlerDispatcher;
+import lark.client.message.inbound.handler.MessageInboundHandler;
 import lark.client.net.NetClient;
 import lark.domain.message.login.LoginReq;
 import lark.domain.message.login.LoginReqBody;
 import lark.domain.message.login.LoginResp;
+import lark.tools.Hardware;
 
 public class LoginFrame extends JFrame{
 	private static final Logger logger = LoggerFactory.getLogger(LoginFrame.class);
@@ -209,12 +209,12 @@ public class LoginFrame extends JFrame{
 			body.setUserName(userName);
 			body.setPassword(password);
 			body.setOs(System.getProperty("os.name"));
-			body.setPlatform("pc");
-			body.setClientVersion("lark-clent-pc-1.0.0");
+			body.setPlatform(Application.platform);
+			body.setClientVersion(Application.clientName);
 			body.setNetType(netClient.getNetType());
 			body.setClientIp(netClient.getLocalIp());
 			body.setClientPort(netClient.getLocalPort());
-			body.setDeviceNumber(getCpuNumber());
+			body.setDeviceNumber(Hardware.getCpuNumber());
 			
 			loginTransactionId = UUID.randomUUID().toString();
 			LoginReq loginReq = new LoginReq();
@@ -227,7 +227,7 @@ public class LoginFrame extends JFrame{
 			String loginMessage = JSON.toJSONString(loginReq);
 			
 			
-			MessageHandlerDispatcher.registerMessageHandler("login", new LoginMessageHandler());
+			MessageInboundHandlerDispatcher.registerMessageHandler("login", new LoginMessageHandler());
 			int returnCode = netClient.send(loginMessage);
 			if(returnCode < 0){
 				logger.error("netClient.send fail");
@@ -248,30 +248,7 @@ public class LoginFrame extends JFrame{
 			}
 			
 		}
-		
 	}
-	
-	
-	 private String getCpuNumber(){  
-        Process process;
-		try {
-			process = Runtime.getRuntime().exec(new String[] { "wmic", "cpu", "get", "ProcessorId" });
-		} catch (IOException e) {
-			return "";
-		}
-        try {
-			process.getOutputStream().close();
-		} catch (IOException e) {
-			return "";
-		}  
-        Scanner sc = new Scanner(process.getInputStream());  
-        sc.next();  
-        String cpuNumber = sc.next();  
-        sc.close();
-        return cpuNumber;
-	 }  
-	
-	
 }
 
 

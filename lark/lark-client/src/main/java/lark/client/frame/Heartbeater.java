@@ -6,8 +6,8 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import lark.client.net.MessageHandlerDispatcher;
-import lark.client.net.MessageInboundHandler;
+import lark.client.message.inbound.handler.MessageInboundHandlerDispatcher;
+import lark.client.message.inbound.handler.MessageInboundHandler;
 import lark.client.net.NetClient;
 import lark.domain.message.heartbeat.HeartbeatReq;
 import lark.domain.message.heartbeat.HeartbeatReqBody;
@@ -29,7 +29,7 @@ public class Heartbeater {
 	private Condition condition = lock.newCondition();
 	
 	public void start(String ticket,final NetClient netClient){
-		MessageHandlerDispatcher.registerMessageHandler("heartbeat", new HeartbeatHandler());
+		MessageInboundHandlerDispatcher.registerMessageHandler("heartbeat", new HeartbeatHandler());
 		
 		logger.info("ticket=[{}]",ticket);
 		HeartbeatReqBody body = new HeartbeatReqBody();
@@ -56,6 +56,7 @@ public class Heartbeater {
 						heartbeatResult = condition.await(5, TimeUnit.SECONDS);
 					} catch (InterruptedException e) {
 						logger.info("InterruptedException");
+						//理论上这个时候应该立即清理上次的上下文参数，并重新发起心跳消息
 						continue;
 					}finally{
 						lock.unlock();

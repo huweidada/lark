@@ -1,5 +1,7 @@
 package lark.client.net;
 
+import lark.client.message.inbound.handler.MessageInboundHandlerDispatcher;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.commons.lang3.StringUtils;
@@ -11,17 +13,17 @@ import io.netty.util.CharsetUtil;
 import io.netty.channel.ChannelHandler.Sharable;
 
 @Sharable
-public class TcpMessageInboundHandler extends ChannelInboundHandlerAdapter{
-	private static final Logger logger = LoggerFactory.getLogger(TcpMessageInboundHandler.class);
+public class TcpChannelMessageInboundHandler extends ChannelInboundHandlerAdapter{
+	private static final Logger logger = LoggerFactory.getLogger(TcpChannelMessageInboundHandler.class);
 	
-	private static TcpMessageInboundHandler instance;
-	public static TcpMessageInboundHandler getInstance(){
+	private static TcpChannelMessageInboundHandler instance;
+	public static TcpChannelMessageInboundHandler getInstance(){
 		if(instance == null){
-			instance = new TcpMessageInboundHandler();
+			instance = new TcpChannelMessageInboundHandler();
 		}
 		return instance;
 	}
-	private TcpMessageInboundHandler() {
+	private TcpChannelMessageInboundHandler() {
 		super();
 	}
 	
@@ -43,7 +45,7 @@ public class TcpMessageInboundHandler extends ChannelInboundHandlerAdapter{
         
         logger.info("received message = [{}]",message);
         
-        MessageHandlerDispatcher.dispatch(message);
+        MessageInboundHandlerDispatcher.dispatch(message);
     }
 	
 	@Override

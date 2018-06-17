@@ -18,7 +18,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.CharsetUtil;
 
-public class TcpClient implements NetClient {
+public class NetTcpClient implements NetClient {
 	private static final Logger logger = LoggerFactory.getLogger(NetClient.class);
 	
 	private String serverIp;
@@ -40,7 +40,7 @@ public class TcpClient implements NetClient {
 		return 0;
 	}
 	
-	public TcpClient(String serverIp, int serverPort,Heartbeater heartbeater) {
+	public NetTcpClient(String serverIp, int serverPort,Heartbeater heartbeater) {
 		this.serverIp = serverIp;
 		this.serverPort = serverPort;
 		this.heartbeater = heartbeater;
