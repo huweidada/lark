@@ -83,25 +83,6 @@ public class HeartbeatFrame implements MessageInboundHandler{
 		thread.start();
 		
 	}
-	
-	/*public class HeartbeatHandler implements MessageInboundHandler{
-		@Override
-		public void handle(String message) {
-			HeartbeatResp heartbeatResp = JSON.parseObject(message,HeartbeatResp.class);
-			if(heartbeatResp.getStatusCode() == 1 && heartbeatTransactionId.equals(heartbeatResp.getTransactionId())){
-				logger.info("心跳成功");
-				lock.lock();
-				try{
-					condition.signal();
-				}catch(Exception e){
-					logger.error("condition.signal fail",e);
-				}finally{
-					lock.unlock();
-				}
-			}
-		}
-		
-	}*/
 
 	@Override
 	public void handle(String message) {

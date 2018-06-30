@@ -52,6 +52,9 @@ public class LoginFrame extends JFrame implements MessageInboundHandler{
 		this.heartbeatFrame = heartbeatFrame;
 		setTitle("欢迎来到jimi的世界");
 		
+		/*Image icon = Toolkit.getDefaultToolkit().getImage(""); 
+		setIconImage(icon);*/
+		
 		GridBagLayout layout = new GridBagLayout();
 		setLayout(layout);
 		
@@ -212,6 +215,9 @@ public class LoginFrame extends JFrame implements MessageInboundHandler{
 			//netClient.startHeartbeat(loginResp.getBody().getTicket());
 			ApplicationContext.getTicket().set(loginResp.getBody().getTicket());
 			heartbeatFrame.start();
+			
+			MainFrame mainFrame = new MainFrame(netClient);
+			mainFrame.setVisible(true);
 		}
 	}
 	
