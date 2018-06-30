@@ -5,14 +5,15 @@ import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;
+import java.util.concurrent.TimeUnit;
 
-import lark.client.frame.Heartbeater;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -27,8 +28,6 @@ public class NetTcpClient implements NetClient {
 	private EventLoopGroup group;
 	private Channel channel;
 	
-	private Heartbeater heartbeater;
-	
 	@Override
 	public int init() {
 		try{
@@ -40,10 +39,9 @@ public class NetTcpClient implements NetClient {
 		return 0;
 	}
 	
-	public NetTcpClient(String serverIp, int serverPort,Heartbeater heartbeater) {
+	public NetTcpClient(String serverIp, int serverPort) {
 		this.serverIp = serverIp;
 		this.serverPort = serverPort;
-		this.heartbeater = heartbeater;
 	}
 
 	private void doInit() throws Exception{
@@ -54,17 +52,17 @@ public class NetTcpClient implements NetClient {
 	}
 
 	@Override
-	public int send(String message) {
+	public int send(String message) throws InterruptedException {
 		int returnCode = -1;
 		if(channel == null){
 			returnCode = init();
 			if(returnCode < 0) return -1;
 		}
-		try{
-			channel.writeAndFlush(Unpooled.copiedBuffer(message + "\r\n",CharsetUtil.UTF_8));
-		}catch(Exception e){
-			logger.error("channel.write(message) fail",e);
-			return -1;
+		ChannelFuture channelFuture = channel.writeAndFlush(Unpooled.copiedBuffer(message + "\r\n",CharsetUtil.UTF_8));
+		boolean sendResult = channelFuture.await(5, TimeUnit.SECONDS);
+		if(!sendResult){
+			logger.error("channelFuture.await(5, TimeUnit.SECONDS) timeout");
+			return 1;
 		}
 		return 0;
 	}
@@ -119,11 +117,6 @@ public class NetTcpClient implements NetClient {
             }  
         }  
         return "";
-	}
-
-	@Override
-	public void startHeartbeat(String ticket) {
-		heartbeater.start(ticket,this);
 	}
 
 }

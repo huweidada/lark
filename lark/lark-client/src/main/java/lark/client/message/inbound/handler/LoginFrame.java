@@ -1,4 +1,4 @@
-package lark.client.frame;
+package lark.client.message.inbound.handler;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -27,27 +27,29 @@ import org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSON;
 
 import lark.client.domain.Application;
-import lark.client.message.inbound.handler.MessageInboundHandlerDispatcher;
-import lark.client.message.inbound.handler.MessageInboundHandler;
+import lark.client.domain.ApplicationContext;
+import lark.client.domain.MessageType;
 import lark.client.net.NetClient;
 import lark.domain.message.login.LoginReq;
 import lark.domain.message.login.LoginReqBody;
 import lark.domain.message.login.LoginResp;
 import lark.tools.Hardware;
 
-public class LoginFrame extends JFrame{
+public class LoginFrame extends JFrame implements MessageInboundHandler{
 	private static final Logger logger = LoggerFactory.getLogger(LoginFrame.class);
 	
 	private static final long serialVersionUID = 1L;
 	private NetClient netClient;
+	private HeartbeatFrame heartbeatFrame;
 	
 	private JTextField accountTextField;
 	private JPasswordField passwordTextField;
 	private String loginTransactionId = "";
 	
-	public LoginFrame(NetClient netClient) throws HeadlessException {
+	public LoginFrame(NetClient netClient,HeartbeatFrame heartbeatFrame) throws HeadlessException {
 		super();
 		this.netClient = netClient;
+		this.heartbeatFrame = heartbeatFrame;
 		setTitle("欢迎来到jimi的世界");
 		
 		GridBagLayout layout = new GridBagLayout();
@@ -194,12 +196,29 @@ public class LoginFrame extends JFrame{
         setSize(376, 380);
         setDefaultCloseOperation(EXIT_ON_CLOSE);  
         setLocationRelativeTo(null);  
+        
+        
+        
+        //注册网络消息事件处理器
+        MessageInboundHandlerDispatcher.registerMessageHandler(MessageType.login, this);
 		
+	}
+	
+	@Override
+	public void handle(String message) {
+		LoginResp loginResp = JSON.parseObject(message,LoginResp.class);
+		if(loginResp.getStatusCode() == 1 && loginTransactionId.equals(loginResp.getTransactionId())){
+			logger.info("登录成功");
+			//netClient.startHeartbeat(loginResp.getBody().getTicket());
+			ApplicationContext.getTicket().set(loginResp.getBody().getTicket());
+			heartbeatFrame.start();
+		}
 	}
 	
 	public class LoginButtonActionListener implements ActionListener{
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			
 			String userName = accountTextField.getText();
 			String password = String.valueOf(passwordTextField.getPassword());
 			
@@ -225,30 +244,21 @@ public class LoginFrame extends JFrame{
 			loginReq.setBody(body);
 			
 			String loginMessage = JSON.toJSONString(loginReq);
-			
-			
-			MessageInboundHandlerDispatcher.registerMessageHandler("login", new LoginMessageHandler());
-			int returnCode = netClient.send(loginMessage);
-			if(returnCode < 0){
-				logger.error("netClient.send fail");
-			}else{
-				logger.info("netClient.send success");
+			int returnCode = -1;
+			try {
+				returnCode = netClient.send(loginMessage);
+			} catch (InterruptedException e1) {
+				logger.error("netClient.send fail",e1);
+				return;
 			}
+			if(returnCode != 0){
+				logger.error("netClient.send fail");
+			}
+			logger.info("netClient.send success");
 		}
 	}	
 
-	//理论上这个handler负责隐藏登录窗体，并且注册一个心跳处理器
-	public class LoginMessageHandler implements MessageInboundHandler{
-		@Override
-		public void handle(String message) {
-			LoginResp loginResp = JSON.parseObject(message,LoginResp.class);
-			if(loginResp.getStatusCode() == 1 && loginTransactionId.equals(loginResp.getTransactionId())){
-				logger.info("登录成功");
-				netClient.startHeartbeat(loginResp.getBody().getTicket());
-			}
-			
-		}
-	}
+	
 }
 
 
