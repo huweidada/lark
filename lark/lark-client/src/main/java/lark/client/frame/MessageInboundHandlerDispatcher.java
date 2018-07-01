@@ -1,4 +1,4 @@
-package lark.client.message.inbound.handler;
+package lark.client.frame;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

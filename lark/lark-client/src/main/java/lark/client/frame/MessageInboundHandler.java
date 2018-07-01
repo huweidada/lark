@@ -1,4 +1,4 @@
-package lark.client.message.inbound.handler;
+package lark.client.frame;
 
 public interface MessageInboundHandler{
 	void handle(String message);

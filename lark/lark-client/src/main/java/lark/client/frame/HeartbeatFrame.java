@@ -1,4 +1,4 @@
-package lark.client.message.inbound.handler;
+package lark.client.frame;
 
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;

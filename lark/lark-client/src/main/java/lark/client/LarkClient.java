@@ -1,7 +1,7 @@
 package lark.client;
 
-import lark.client.message.inbound.handler.HeartbeatFrame;
-import lark.client.message.inbound.handler.LoginFrame;
+import lark.client.frame.HeartbeatFrame;
+import lark.client.frame.LoginFrame;
 import lark.client.net.NetClient;
 import lark.client.net.NetTcpClient;
 

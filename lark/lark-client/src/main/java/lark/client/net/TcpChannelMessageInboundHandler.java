@@ -1,7 +1,5 @@
 package lark.client.net;
 
-import lark.client.message.inbound.handler.MessageInboundHandlerDispatcher;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.commons.lang3.StringUtils;
@@ -10,6 +8,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.CharsetUtil;
+import lark.client.frame.MessageInboundHandlerDispatcher;
 import io.netty.channel.ChannelHandler.Sharable;
 
 @Sharable

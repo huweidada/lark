@@ -1,4 +1,4 @@
-package lark.client.message.inbound.handler;
+package lark.client.frame;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
