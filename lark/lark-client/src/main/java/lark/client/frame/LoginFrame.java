@@ -216,8 +216,8 @@ public class LoginFrame extends JFrame implements MessageInboundHandler{
 			ApplicationContext.getTicket().set(loginResp.getBody().getTicket());
 			heartbeatFrame.start();
 			
-			MainFrame mainFrame = new MainFrame(netClient);
-			mainFrame.setVisible(true);
+			/*MainFrame mainFrame = new MainFrame(netClient);
+			mainFrame.setVisible(true);*/
 		}
 	}
 	
