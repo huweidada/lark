@@ -146,9 +146,9 @@ public class ListContactHandler implements MessageInboundHandler{
 	private int checkTicket(String ticket){
 		String userId = null;
 		try{
-			userId = ticketService.checkTicketAndResetTll(ticket);
+			userId = ticketService.checkTicketAndResetTtl(ticket);
 		}catch(Exception e){
-			logger.error("ticketService.checkTicketAndResetTll(ticket[{}]) fail",ticket,e);
+			logger.error("ticketService.checkTicketAndResetTtl(ticket[{}]) fail",ticket,e);
 			return -1;
 		}
 		if(StringUtils.isBlank(userId)) return 1;

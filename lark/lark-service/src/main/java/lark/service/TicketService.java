@@ -6,6 +6,6 @@ public interface TicketService {
 	
 	String checkTicket(String ticket);
 
-	String checkTicketAndResetTll(String ticket);
+	String checkTicketAndResetTtl(String ticket);
 	
 }

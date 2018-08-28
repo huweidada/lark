@@ -123,7 +123,7 @@ public class TicketServiceImpl implements TicketService {
 	}
 
 	@Override
-	public String checkTicketAndResetTll(String ticket) {
+	public String checkTicketAndResetTtl(String ticket) {
 		String userId = checkTicket(ticket);
 		if(StringUtils.isBlank(userId)) return null;
 		

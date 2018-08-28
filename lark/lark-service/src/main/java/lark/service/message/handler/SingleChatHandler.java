@@ -73,9 +73,9 @@ public class SingleChatHandler implements MessageInboundHandler{
 		
 		String userId = null;
 		try{
-			userId = ticketService.checkTicketAndResetTll(singleChatReq.getBody().getTicket());
+			userId = ticketService.checkTicketAndResetTtl(singleChatReq.getBody().getTicket());
 		}catch(Exception e){
-			logger.error("ticketService.checkTicketAndResetTll(ticket[{}]) fail",singleChatReq.getBody().getTicket(),e);
+			logger.error("ticketService.checkTicketAndResetTtl(ticket[{}]) fail",singleChatReq.getBody().getTicket(),e);
 			singleChatResp.setStatusCode(ServerStatusCode.ticketError);
 			singleChatResp.setStatusDescription("ticketError");
 			messageOutboundHandler.write(channelId, JSON.toJSONString(singleChatResp));
